@@ -33,7 +33,7 @@ class StyleViewController: UIViewController {
 //            gradient.startPoint = CGPoint(x: 0, y: 1)
 //            gradient.endPoint = CGPoint(x: 1, y: 1)
 //            style.gradient = gradient
-            style.border = DrBorderStyle(width: 2)
+            style.border = DrBorderStyle(width: 2, color: .blue)
             
             flex.addItem(self.rectView).size(CGSize(width: 200, height: 100)).style(style)
             
