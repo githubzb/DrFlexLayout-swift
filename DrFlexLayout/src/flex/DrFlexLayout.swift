@@ -1189,55 +1189,153 @@ public final class DrFlex {
         }
     }
     
+    /**
+     Set the view style, include round, border, shadow, gradient.
+    
+     - Parameter style: DrStyle
+     - Returns: flex interface
+    */
     @discardableResult
     public func style(_ style: DrStyle) -> DrFlex {
-        layoutFinished({ v in
-            if let gradientStyle = style.gradient {
-                v?.dr_setGradientStyle(gradientStyle)
-            }else if (v?.dr_useGradient ?? false) {
-                v?.dr_gradientLayer.removeFromSuperlayer()
+        if let host = self.view {
+            host.dr_style = style
+            if let border = style.border{
+                borderWidth(border.width)
             }
-            if let roundStyle = style.round {
-                if style.shadow != nil && roundStyle.isSameRadius {
-                    v?.layer.mask = nil
-                    v?.layer.cornerRadius = roundStyle.sameRadius!
-                    v?.layer.masksToBounds = false
-                    v?.dr_gradientLayer.masksToBounds = true
-                    v?.dr_gradientLayer.cornerRadius = roundStyle.sameRadius!
-                    v?.dr_gradientLayer.shouldRasterize = true
-                    v?.dr_gradientLayer.rasterizationScale = UIScreen.main.scale
-                }else{
-                    v?.dr_setRoundStyle(roundStyle, masksToBounds: style.gradient != nil)
-                }
-            }
-            if !(v?.dr_useGradient ?? false) {
-                if let bgColor = style.background {
-                    v?.backgroundColor = bgColor
-                }
-            }
-            if let shadow = style.shadow {
-                v?.dr_setShadowStyle(shadow)
-            }
-        }, forKey: "_dr_style")
+            layoutFinished({ $0?.dr_buildStyle() }, forKey: "_dr_flex_style")
+        }else{
+            preconditionFailure("Trying to modify deallocated host view")
+        }
         return self
     }
     
     /**
-     Set the view.layer.cornerRadius.
-     This could equivalent to calling view.layer.masksToBounds = false; view.layer.cornerRadius = radius
+     Set the rounded corners of the view.
     
-     - Parameter radius: corner radius
+     - Parameter topLeft: topLeftRadius
+     - Parameter topRight: topRightRadius
+     - Parameter bottomLeft: bottomLeftRadius
+     - Parameter bottomRight: bottomRightRadius
      - Returns: flex interface
     */
     @discardableResult
-    public func cornerRadius(_ radius: CGFloat) -> DrFlex {
+    public func cornerRadius(topLeft: CGFloat, topRight: CGFloat, bottomLeft: CGFloat, bottomRight: CGFloat) -> DrFlex {
         if let host = self.view {
-            host.layer.masksToBounds = false
-            host.layer.cornerRadius = radius
-            return self
+            var style = host.dr_style
+            if style == nil {
+                style = DrStyle()
+            }
+            style?.round = DrRoundStyle(topLeft: topLeft,
+                                        topRight: topRight,
+                                        bottomLeft: bottomLeft,
+                                        bottomRight: bottomRight)
+            host.dr_style = style
+            layoutFinished({ $0?.dr_buildStyle() }, forKey: "_dr_flex_style")
         }else{
             preconditionFailure("Trying to modify deallocated host view")
         }
+        return self
+    }
+    
+    /**
+     Set the rounded corners of the view.
+    
+     - Parameter radius: cornerRadius
+     - Returns: flex interface
+    */
+    @discardableResult
+    public func cornerRadius(radius: CGFloat) -> DrFlex {
+        if let host = self.view {
+            var style = host.dr_style
+            if style == nil {
+                style = DrStyle()
+            }
+            style?.round = DrRoundStyle(radius: radius)
+            host.dr_style = style
+            layoutFinished({ $0?.dr_buildStyle() }, forKey: "_dr_flex_style")
+        }else {
+            preconditionFailure("Trying to modify deallocated host view")
+        }
+        return self
+    }
+    
+    /**
+     Set the border of the view.
+    
+     - Parameter width: Width of border
+     - Parameter color: Color of border
+     - Returns: flex interface
+    */
+    @discardableResult
+    public func border(width: CGFloat, color: UIColor) -> DrFlex {
+        if let host = self.view {
+            var style = host.dr_style
+            if style == nil {
+                style = DrStyle()
+            }
+            borderWidth(width)
+            style?.border = DrBorderStyle(width: width, color: color)
+            host.dr_style = style
+            layoutFinished({ $0?.dr_buildStyle() }, forKey: "_dr_flex_style")
+        }else{
+            preconditionFailure("Trying to modify deallocated host view")
+        }
+        return self
+    }
+    
+    /**
+     Set the shadow of the view.
+    
+     - Parameter offset: 阴影的偏移量
+     - Parameter blurRadius: 阴影的模糊半径
+     - Parameter spreadRadius: 阴影的扩展半径
+     - Parameter color: 阴影颜色
+     - Parameter opacity: 阴影的透明度[0, 1]
+     - Returns: flex interface
+    */
+    @discardableResult
+    public func shadow(offset: CGSize, blurRadius: CGFloat, spreadRadius: CGFloat? = nil, color: UIColor, opacity: CGFloat = 1) -> DrFlex {
+        if let host = self.view {
+            var style = host.dr_style
+            if style == nil {
+                style = DrStyle()
+            }
+            style?.shadow = DrShadowStyle(offset: offset,
+                                          blurRadius: blurRadius,
+                                          spreadRadius: spreadRadius,
+                                          color: color)
+            host.dr_style = style
+            layoutFinished({ $0?.dr_buildStyle() }, forKey: "_dr_flex_style")
+        }else {
+            preconditionFailure("Trying to modify deallocated host view")
+        }
+        return self
+    }
+    
+    /**
+     Set the gradient background for the view.
+    
+     - Parameter offset: 阴影的偏移量
+     - Parameter blurRadius: 阴影的模糊半径
+     - Parameter spreadRadius: 阴影的扩展半径
+     - Parameter color: 阴影颜色
+     - Parameter opacity: 阴影的透明度[0, 1]
+     - Returns: flex interface
+    */
+    @discardableResult
+    public func gradient(style gradientStyle: DrGradientStyle) -> DrFlex {
+        if let host = self.view {
+            var style = host.dr_style
+            if style == nil {
+                style = DrStyle()
+            }
+            style?.gradient = gradientStyle
+            host.dr_style = style
+            layoutFinished({ $0?.dr_buildStyle() }, forKey: "_dr_flex_style")
+        }else {
+            preconditionFailure("Trying to modify deallocated host view")
+        }
+        return self
     }
     
     

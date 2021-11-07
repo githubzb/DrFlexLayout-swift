@@ -47,7 +47,6 @@ class NormalViewController: UIViewController {
                     .size(CGSize(width: 50, height: 50))
                     .marginTop(10)
                     .backgroundColor(.orange)
-                    .cornerRadius(5)
                     .borderWidth(10).define({ flex in
                         flex.addItem().flex(1).backgroundColor(.blue)
                     }).layoutFinished { v in

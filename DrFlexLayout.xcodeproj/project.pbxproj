@@ -56,16 +56,13 @@
 		6D669C86271D67E700655F8A /* DrFlextLayout+Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D669C85271D67E700655F8A /* DrFlextLayout+Enums.swift */; };
 		6D669C88271D69F800655F8A /* DrPercent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D669C87271D69F800655F8A /* DrPercent.swift */; };
 		6D669C8A271D92EA00655F8A /* TestLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D669C89271D92EA00655F8A /* TestLayer.swift */; };
-		6D669C8D271DA4F000655F8A /* UIView+Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D669C8C271DA4F000655F8A /* UIView+Gradient.swift */; };
 		6D8D3EA3272D761900E77778 /* DRFlexLayoutTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D8D3EA1272D761900E77778 /* DRFlexLayoutTransaction.h */; };
 		6D8D3EA4272D761900E77778 /* DRFlexLayoutTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8D3EA2272D761900E77778 /* DRFlexLayoutTransaction.m */; };
+		6DAE9E9C2737CF530062D532 /* UIView+Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAE9E9B2737CF530062D532 /* UIView+Style.swift */; };
 		6DBEC77A272E3881006EB388 /* StyleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC779272E3881006EB388 /* StyleViewController.swift */; };
 		6DBEC77C272E38CF006EB388 /* NormalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC77B272E38CF006EB388 /* NormalViewController.swift */; };
 		6DBEC77E272E3C23006EB388 /* DrStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC77D272E3C23006EB388 /* DrStyle.swift */; };
 		6DBEC780272E7194006EB388 /* UIBezierPath+Rounded.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC77F272E7193006EB388 /* UIBezierPath+Rounded.swift */; };
-		6DBEC782272E8572006EB388 /* UIView+Round.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC781272E8572006EB388 /* UIView+Round.swift */; };
-		6DBEC784272EA149006EB388 /* UIView+Shadow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC783272EA149006EB388 /* UIView+Shadow.swift */; };
-		6DBEC786272EC0A0006EB388 /* UIView+Border.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC785272EC0A0006EB388 /* UIView+Border.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -121,16 +118,13 @@
 		6D669C85271D67E700655F8A /* DrFlextLayout+Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DrFlextLayout+Enums.swift"; sourceTree = "<group>"; };
 		6D669C87271D69F800655F8A /* DrPercent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrPercent.swift; sourceTree = "<group>"; };
 		6D669C89271D92EA00655F8A /* TestLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayer.swift; sourceTree = "<group>"; };
-		6D669C8C271DA4F000655F8A /* UIView+Gradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Gradient.swift"; sourceTree = "<group>"; };
 		6D8D3EA1272D761900E77778 /* DRFlexLayoutTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DRFlexLayoutTransaction.h; sourceTree = "<group>"; };
 		6D8D3EA2272D761900E77778 /* DRFlexLayoutTransaction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DRFlexLayoutTransaction.m; sourceTree = "<group>"; };
+		6DAE9E9B2737CF530062D532 /* UIView+Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Style.swift"; sourceTree = "<group>"; };
 		6DBEC779272E3881006EB388 /* StyleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleViewController.swift; sourceTree = "<group>"; };
 		6DBEC77B272E38CF006EB388 /* NormalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalViewController.swift; sourceTree = "<group>"; };
 		6DBEC77D272E3C23006EB388 /* DrStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrStyle.swift; sourceTree = "<group>"; };
 		6DBEC77F272E7193006EB388 /* UIBezierPath+Rounded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBezierPath+Rounded.swift"; sourceTree = "<group>"; };
-		6DBEC781272E8572006EB388 /* UIView+Round.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Round.swift"; sourceTree = "<group>"; };
-		6DBEC783272EA149006EB388 /* UIView+Shadow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Shadow.swift"; sourceTree = "<group>"; };
-		6DBEC785272EC0A0006EB388 /* UIView+Border.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Border.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -289,11 +283,8 @@
 		6D669C8B271DA4A000655F8A /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				6D669C8C271DA4F000655F8A /* UIView+Gradient.swift */,
-				6DBEC781272E8572006EB388 /* UIView+Round.swift */,
 				6DBEC77F272E7193006EB388 /* UIBezierPath+Rounded.swift */,
-				6DBEC783272EA149006EB388 /* UIView+Shadow.swift */,
-				6DBEC785272EC0A0006EB388 /* UIView+Border.swift */,
+				6DAE9E9B2737CF530062D532 /* UIView+Style.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -440,15 +431,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6D669C8D271DA4F000655F8A /* UIView+Gradient.swift in Sources */,
 				6D669C88271D69F800655F8A /* DrPercent.swift in Sources */,
 				6D669C82271D601B00655F8A /* UIView+DrFlexLayout.swift in Sources */,
 				6D8D3EA4272D761900E77778 /* DRFlexLayoutTransaction.m in Sources */,
-				6DBEC786272EC0A0006EB388 /* UIView+Border.swift in Sources */,
 				6D302067271478A40065254C /* UIView+Yoga.m in Sources */,
+				6DAE9E9C2737CF530062D532 /* UIView+Style.swift in Sources */,
 				6D302056271477200065254C /* experiments.cpp in Sources */,
 				6D30204F271477200065254C /* log.cpp in Sources */,
-				6DBEC784272EA149006EB388 /* UIView+Shadow.swift in Sources */,
 				6DBEC77E272E3C23006EB388 /* DrStyle.swift in Sources */,
 				6D302068271478A40065254C /* YGLayout.m in Sources */,
 				6D302048271477200065254C /* YGConfig.cpp in Sources */,
@@ -463,7 +452,6 @@
 				6D669C80271D5FCD00655F8A /* DrFlexLayout+Private.swift in Sources */,
 				6DBEC780272E7194006EB388 /* UIBezierPath+Rounded.swift in Sources */,
 				6D302053271477200065254C /* YGNodePrint.cpp in Sources */,
-				6DBEC782272E8572006EB388 /* UIView+Round.swift in Sources */,
 				6D302040271477200065254C /* YGLayout.cpp in Sources */,
 				6D302064271478A40065254C /* YGLayoutExtensions.swift in Sources */,
 				6D302047271477200065254C /* YGEnums.cpp in Sources */,

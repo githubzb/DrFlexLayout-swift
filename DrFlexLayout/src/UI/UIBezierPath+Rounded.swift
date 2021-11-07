@@ -11,26 +11,30 @@ fileprivate let kDrCircleControlPoint = 0.447715
 
 extension UIBezierPath {
     
-    static func dr_bezierPath(rect: CGRect, style: DrRoundStyle) -> UIBezierPath{
-        if style.radius == nil && (style.topLeftRadius == nil || style.topRightRadius == nil || style.bottomLeftRadius == nil || style.bottomRightRadius == nil) {
-            return UIBezierPath()
+    public static func dr_bezierPath(rect: CGRect,
+                                     inset: CGPoint = .zero,
+                                     topLeft topLeftRadius: CGFloat,
+                                     topRight topRightRadius: CGFloat,
+                                     bottomLeft bottomLeftRadius: CGFloat,
+                                     bottomRight bottomRightRadius: CGFloat) -> UIBezierPath {
+        if topLeftRadius.isNaN || topRightRadius.isNaN || bottomLeftRadius.isNaN || bottomRightRadius.isNaN {
+            return UIBezierPath(rect: rect)
         }
-        if style.isSameRadius {
-            return UIBezierPath(roundedRect: rect, cornerRadius: style.sameRadius!)
-        }
+        let x = rect.origin.x - inset.x
+        let y = rect.origin.y - inset.y
+        let maxX = rect.maxX + inset.x
+        let maxY = rect.maxY + inset.y
         let path = UIBezierPath()
-        let topLeftVal = getValueOrZero(value: style.topLeftRadius, def: style.radius)
-        path.move(to: CGPoint(x: rect.origin.x + topLeftVal, y: rect.origin.y))
+        path.move(to: CGPoint(x: x - inset.x + topLeftRadius, y: y))
         
         // +------------------+
         //  \\      top     //
         //   \\+----------+//
-        let topRightVal = getValueOrZero(value: style.topRightRadius, def: style.radius)
-        path.addLine(to: CGPoint(x: rect.maxX - topRightVal, y: rect.origin.y))
-        if topRightVal > 0 {
-            path.addCurve(to: CGPoint(x: rect.maxX, y: rect.origin.y + topRightVal),
-                          controlPoint1: CGPoint(x: rect.maxX - topRightVal * kDrCircleControlPoint, y: rect.origin.y),
-                          controlPoint2: CGPoint(x: rect.maxX, y: rect.origin.y + topRightVal * kDrCircleControlPoint))
+        path.addLine(to: CGPoint(x: maxX - topRightRadius, y: y))
+        if topRightRadius > 0 {
+            path.addCurve(to: CGPoint(x: maxX, y: y + topRightRadius),
+                          controlPoint1: CGPoint(x: maxX + inset.x - topRightRadius * kDrCircleControlPoint, y: y),
+                          controlPoint2: CGPoint(x: maxX, y: y - inset.y + topRightRadius * kDrCircleControlPoint))
         }
         // +------------------+
         //  \\     top      //|
@@ -41,12 +45,12 @@ extension UIBezierPath {
         //                |   |
         //                 \\ |
         //                  \\|
-        let bottomRightVal = getValueOrZero(value: style.bottomRightRadius, def: style.radius)
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - bottomRightVal))
-        if bottomRightVal > 0 {
-            path.addCurve(to: CGPoint(x: rect.maxX - bottomRightVal, y: rect.maxY),
-                          controlPoint1: CGPoint(x: rect.maxX, y: rect.maxY - bottomRightVal * kDrCircleControlPoint),
-                          controlPoint2: CGPoint(x: rect.maxX - bottomRightVal * kDrCircleControlPoint, y: rect.maxY))
+        
+        path.addLine(to: CGPoint(x: maxX, y: maxY - bottomRightRadius))
+        if bottomRightRadius > 0 {
+            path.addCurve(to: CGPoint(x: maxX - bottomRightRadius, y: maxY),
+                          controlPoint1: CGPoint(x: maxX, y: maxY + inset.y - bottomRightRadius * kDrCircleControlPoint),
+                          controlPoint2: CGPoint(x: maxX + inset.x - bottomRightRadius * kDrCircleControlPoint, y: maxY))
         }
         
         // +------------------+
@@ -59,12 +63,12 @@ extension UIBezierPath {
         //   //+----------+\\ |
         //  //    bottom    \\|
         // +------------------+
-        let bottomLeftVal = getValueOrZero(value: style.bottomLeftRadius, def: style.radius)
-        path.addLine(to: CGPoint(x: rect.origin.x + bottomLeftVal, y: rect.maxY))
-        if bottomLeftVal > 0 {
-            path.addCurve(to: CGPoint(x: rect.origin.x, y: rect.maxY - bottomLeftVal),
-                          controlPoint1: CGPoint(x: rect.origin.x + bottomLeftVal * kDrCircleControlPoint, y: rect.maxY),
-                          controlPoint2: CGPoint(x: rect.origin.x, y: rect.maxY - bottomLeftVal * kDrCircleControlPoint))
+        
+        path.addLine(to: CGPoint(x: x + bottomLeftRadius, y: maxY))
+        if bottomLeftRadius > 0 {
+            path.addCurve(to: CGPoint(x: x, y: maxY - bottomLeftRadius),
+                          controlPoint1: CGPoint(x: x - inset.x + bottomLeftRadius * kDrCircleControlPoint, y: maxY),
+                          controlPoint2: CGPoint(x: x, y: maxY + inset.y - bottomLeftRadius * kDrCircleControlPoint))
         }
         
         // +------------------+
@@ -77,20 +81,13 @@ extension UIBezierPath {
         // | //+----------+\\ |
         // |//    bottom    \\|
         // +------------------+
-        path.addLine(to: CGPoint(x: rect.origin.x, y: rect.origin.y + topLeftVal))
-        if topLeftVal > 0 {
-            path.addCurve(to: CGPoint(x: rect.origin.x + topLeftVal, y: rect.origin.y),
-                          controlPoint1: CGPoint(x: rect.origin.x, y: rect.origin.y + topLeftVal * kDrCircleControlPoint),
-                          controlPoint2: CGPoint(x: rect.origin.x + topLeftVal * kDrCircleControlPoint, y: rect.origin.y))
+        path.addLine(to: CGPoint(x: x, y: y + inset.y + topLeftRadius))
+        if topLeftRadius > 0 {
+            path.addCurve(to: CGPoint(x: x + topLeftRadius, y: y),
+                          controlPoint1: CGPoint(x: x, y: y - inset.y + topLeftRadius * kDrCircleControlPoint),
+                          controlPoint2: CGPoint(x: x - inset.x + topLeftRadius * kDrCircleControlPoint, y: y))
         }
         return path
     }
     
-    private static func getValueOrZero(value: CGFloat?, def: CGFloat?) -> CGFloat {
-        guard let value = value else {
-            guard let `default` = def else { return 0 }
-            return `default`
-        }
-        return value
-    }
 }

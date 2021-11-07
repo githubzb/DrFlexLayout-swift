@@ -8,15 +8,13 @@
 import UIKit
 
 /// 视图样式集合
-public struct DrStyle {
-    /// 圆角半径
+public struct DrStyle: Equatable {
+    /// 圆角
     public var round: DrRoundStyle? = nil
     /// 边框
     public var border: DrBorderStyle? = nil
     /// 阴影
     public var shadow: DrShadowStyle? = nil
-    /// 背景色
-    public var background: UIColor? = nil
     /// 渐变背景色
     public var gradient: DrGradientStyle? = nil
     
@@ -26,8 +24,8 @@ public struct DrStyle {
         self.round = DrRoundStyle(radius: cornerRadius)
     }
     
-    public init(border: CGFloat, color: UIColor) {
-        self.border = DrBorderStyle(width: border, color: color)
+    public init(border width: CGFloat, color: UIColor) {
+        self.border = DrBorderStyle(width: width, color: color)
     }
     
     public init(shadow: DrShadowStyle) {
@@ -37,20 +35,13 @@ public struct DrStyle {
     public init(gradient: DrGradientStyle) {
         self.gradient = gradient
     }
+    
 }
 
 /// 边框样式
-public struct DrBorderStyle {
+public struct DrBorderStyle: Equatable {
     /// 边框宽度
-    public var width: CGFloat? = nil
-    /// 左边框宽度
-    public var leftWidth: CGFloat? = nil
-    /// 上边框宽度
-    public var topWidth: CGFloat? = nil
-    /// 右边框宽度
-    public var rightWidth: CGFloat? = nil
-    /// 下边框宽度
-    public var bottomWidth: CGFloat? = nil
+    public var width: CGFloat
     /// 边框颜色
     public var color: UIColor
     
@@ -59,25 +50,10 @@ public struct DrBorderStyle {
         self.color = color
     }
     
-    public init(edge: UIEdgeInsets, color: UIColor) {
-        leftWidth = edge.left
-        topWidth = edge.top
-        rightWidth = edge.right
-        bottomWidth = edge.bottom
-        self.color = color
-    }
-    
-    public init(horizontal: CGFloat? = nil, vertical: CGFloat? = nil, color: UIColor){
-        leftWidth = horizontal
-        rightWidth = horizontal
-        topWidth = vertical
-        bottomWidth = vertical
-        self.color = color
-    }
 }
 
 /// 圆角样式
-public struct DrRoundStyle {
+public struct DrRoundStyle: Equatable {
     /// 半径
     public let radius: CGFloat?
     /// 左上角半径
@@ -106,7 +82,7 @@ public struct DrRoundStyle {
         if let radius = radius {
             return radius
         }
-        guard let topleft = topLeftRadius else { return nil }
+        guard isSameRadius, let topleft = topLeftRadius else { return nil }
         return topleft
     }
     
@@ -129,7 +105,7 @@ public struct DrRoundStyle {
 }
 
 /// 阴影样式
-public struct DrShadowStyle {
+public struct DrShadowStyle: Equatable {
     
     /// 阴影颜色
     public var color: UIColor
@@ -140,9 +116,9 @@ public struct DrShadowStyle {
     /// 阴影的透明度
     public var opacity: CGFloat
     /// 阴影的扩散半径
-    public var spreadRadius: CGFloat
+    public var spreadRadius: CGFloat?
     
-    public init(offset: CGSize, blurRadius: CGFloat, spreadRadius: CGFloat = 0, color: UIColor, opacity: CGFloat = 1){
+    public init(offset: CGSize, blurRadius: CGFloat, spreadRadius: CGFloat? = nil, color: UIColor, opacity: CGFloat = 1){
         self.offset = offset
         self.blurRadius = blurRadius
         self.spreadRadius = spreadRadius
@@ -152,7 +128,7 @@ public struct DrShadowStyle {
 }
 
 /// 渐变背景色
-public struct DrGradientStyle {
+public struct DrGradientStyle: Equatable {
     public var colors: [CGColor]? = nil
     public var locations: [NSNumber]? = nil
     public var startPoint: CGPoint? = nil
@@ -160,4 +136,10 @@ public struct DrGradientStyle {
     public var type: CAGradientLayerType? = nil
     
     public init(){}
+    public init(colors: [UIColor], locations: [Float]? = nil) {
+        self.colors = colors.map({ $0.cgColor })
+        if let locations = locations {
+            self.locations = locations.map({ NSNumber(value: $0) })
+        }
+    }
 }

@@ -43,6 +43,7 @@ class ViewController: UIViewController {
                     btn.addTarget(self, action: #selector(clickStyle(_:)), for: .touchUpInside)
                 }
             }
+            
         }
         view = v
     }
@@ -58,6 +59,7 @@ class ViewController: UIViewController {
         vc.title = btn.title(for: .normal)
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    
 
 }
 
