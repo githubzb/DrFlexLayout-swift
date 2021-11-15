@@ -50,6 +50,8 @@
 		6D3020762714832B0065254C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3020752714832A0065254C /* ViewController.swift */; };
 		6D30207B2714832D0065254C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D30207A2714832D0065254C /* Assets.xcassets */; };
 		6D30207E2714832D0065254C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D30207C2714832D0065254C /* LaunchScreen.storyboard */; };
+		6D3036E727428B6D008839BB /* DrFlexTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3036E627428B6D008839BB /* DrFlexTableView.swift */; };
+		6D3036E9274291F9008839BB /* FlexTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3036E8274291F9008839BB /* FlexTableViewController.swift */; };
 		6D669C7E271D5E5D00655F8A /* DrFlexLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D669C7D271D5E5D00655F8A /* DrFlexLayout.swift */; };
 		6D669C80271D5FCD00655F8A /* DrFlexLayout+Private.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D669C7F271D5FCD00655F8A /* DrFlexLayout+Private.swift */; };
 		6D669C82271D601B00655F8A /* UIView+DrFlexLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D669C81271D601B00655F8A /* UIView+DrFlexLayout.swift */; };
@@ -112,6 +114,8 @@
 		6D30207A2714832D0065254C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6D30207D2714832D0065254C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6D30207F2714832D0065254C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6D3036E627428B6D008839BB /* DrFlexTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrFlexTableView.swift; sourceTree = "<group>"; };
+		6D3036E8274291F9008839BB /* FlexTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexTableViewController.swift; sourceTree = "<group>"; };
 		6D669C7D271D5E5D00655F8A /* DrFlexLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrFlexLayout.swift; sourceTree = "<group>"; };
 		6D669C7F271D5FCD00655F8A /* DrFlexLayout+Private.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DrFlexLayout+Private.swift"; sourceTree = "<group>"; };
 		6D669C81271D601B00655F8A /* UIView+DrFlexLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+DrFlexLayout.swift"; sourceTree = "<group>"; };
@@ -285,6 +289,7 @@
 			children = (
 				6DBEC77F272E7193006EB388 /* UIBezierPath+Rounded.swift */,
 				6DAE9E9B2737CF530062D532 /* UIView+Style.swift */,
+				6D3036E627428B6D008839BB /* DrFlexTableView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -294,6 +299,7 @@
 			children = (
 				6DBEC779272E3881006EB388 /* StyleViewController.swift */,
 				6DBEC77B272E38CF006EB388 /* NormalViewController.swift */,
+				6D3036E8274291F9008839BB /* FlexTableViewController.swift */,
 			);
 			path = demo;
 			sourceTree = "<group>";
@@ -445,6 +451,7 @@
 				6D669C7E271D5E5D00655F8A /* DrFlexLayout.swift in Sources */,
 				6D302045271477200065254C /* YGStyle.cpp in Sources */,
 				6D30204B271477200065254C /* Utils.cpp in Sources */,
+				6D3036E727428B6D008839BB /* DrFlexTableView.swift in Sources */,
 				6D669C86271D67E700655F8A /* DrFlextLayout+Enums.swift in Sources */,
 				6D302059271477200065254C /* Yoga.cpp in Sources */,
 				6D302050271477200065254C /* YGValue.cpp in Sources */,
@@ -468,6 +475,7 @@
 				6D3020762714832B0065254C /* ViewController.swift in Sources */,
 				6D3020722714832A0065254C /* AppDelegate.swift in Sources */,
 				6D3020742714832A0065254C /* SceneDelegate.swift in Sources */,
+				6D3036E9274291F9008839BB /* FlexTableViewController.swift in Sources */,
 				6D669C8A271D92EA00655F8A /* TestLayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
