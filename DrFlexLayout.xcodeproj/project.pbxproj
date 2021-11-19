@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B9730A727474FD70075C149 /* DrFlexLayout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D302011271475C50065254C /* DrFlexLayout.framework */; platformFilter = ios; };
+		1B9730A827474FD70075C149 /* DrFlexLayout.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6D302011271475C50065254C /* DrFlexLayout.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1B9730AF274799460075C149 /* DrFlexScrollViewCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9730AE274799460075C149 /* DrFlexScrollViewCallback.swift */; };
 		6D302016271475C60065254C /* DrFlexLayout.docc in Sources */ = {isa = PBXBuildFile; fileRef = 6D302015271475C60065254C /* DrFlexLayout.docc */; };
 		6D302017271475C60065254C /* DrFlexLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D302014271475C50065254C /* DrFlexLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6D30203F271477200065254C /* YGNodePrint.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D30201F2714771F0065254C /* YGNodePrint.h */; };
@@ -67,7 +70,32 @@
 		6DBEC780272E7194006EB388 /* UIBezierPath+Rounded.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC77F272E7193006EB388 /* UIBezierPath+Rounded.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		1B9730A927474FD70075C149 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6D302008271475C50065254C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6D302010271475C50065254C;
+			remoteInfo = DrFlexLayout;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1B9730AB27474FD70075C149 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1B9730A827474FD70075C149 /* DrFlexLayout.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		1B9730AE274799460075C149 /* DrFlexScrollViewCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrFlexScrollViewCallback.swift; sourceTree = "<group>"; };
 		6D302011271475C50065254C /* DrFlexLayout.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DrFlexLayout.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D302014271475C50065254C /* DrFlexLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrFlexLayout.h; sourceTree = "<group>"; };
 		6D302015271475C60065254C /* DrFlexLayout.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = DrFlexLayout.docc; sourceTree = "<group>"; };
@@ -143,18 +171,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1B9730A727474FD70075C149 /* DrFlexLayout.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1B9730A627474FD70075C149 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		6D302007271475C50065254C = {
 			isa = PBXGroup;
 			children = (
 				6D302013271475C50065254C /* DrFlexLayout */,
 				6D3020702714832A0065254C /* DrFlexLayoutDemo */,
 				6D302012271475C50065254C /* Products */,
+				1B9730A627474FD70075C149 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -290,6 +327,7 @@
 				6DBEC77F272E7193006EB388 /* UIBezierPath+Rounded.swift */,
 				6DAE9E9B2737CF530062D532 /* UIView+Style.swift */,
 				6D3036E627428B6D008839BB /* DrFlexTableView.swift */,
+				1B9730AE274799460075C149 /* DrFlexScrollViewCallback.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -365,10 +403,12 @@
 				6D30206B2714832A0065254C /* Sources */,
 				6D30206C2714832A0065254C /* Frameworks */,
 				6D30206D2714832A0065254C /* Resources */,
+				1B9730AB27474FD70075C149 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				1B9730AA27474FD70075C149 /* PBXTargetDependency */,
 			);
 			name = DrFlexLayoutDemo;
 			productName = DrFlexLayoutDemo;
@@ -461,6 +501,7 @@
 				6D302053271477200065254C /* YGNodePrint.cpp in Sources */,
 				6D302040271477200065254C /* YGLayout.cpp in Sources */,
 				6D302064271478A40065254C /* YGLayoutExtensions.swift in Sources */,
+				1B9730AF274799460075C149 /* DrFlexScrollViewCallback.swift in Sources */,
 				6D302047271477200065254C /* YGEnums.cpp in Sources */,
 				6D302046271477200065254C /* YGNode.cpp in Sources */,
 			);
@@ -481,6 +522,15 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1B9730AA27474FD70075C149 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = 6D302010271475C50065254C /* DrFlexLayout */;
+			targetProxy = 1B9730A927474FD70075C149 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		6D30207C2714832D0065254C /* LaunchScreen.storyboard */ = {
@@ -686,6 +736,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 74BN3WLK9M;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DrFlexLayoutDemo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -714,6 +765,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 74BN3WLK9M;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DrFlexLayoutDemo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

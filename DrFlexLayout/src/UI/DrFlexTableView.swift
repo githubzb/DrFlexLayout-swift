@@ -27,6 +27,10 @@ public class DrFlexTableView: UIView {
     private lazy var headerViewList: [UIView?] = []
     private lazy var footerViewList: [UIView?] = []
     
+    private lazy var _scrollDelegate = DrFlexScrollViewCallback()
+    /// UIScrollView代理
+    public var scrollDelegate: DrFlexScrollViewCallback { self._scrollDelegate }
+    
     private var dataSource: DrFlexTableDataSource?
     private var delegate: DrFlexTableDelegate?
     
@@ -66,95 +70,9 @@ public class DrFlexTableView: UIView {
         table.delegate = delegate
     }
     
-    // MARK: - 回调函数
-    
-    /// 返回分组个数
-    fileprivate var numberOfSections: (()->Int)?
-    /// 绑定分组个数回调
-    public func numberOfSections<T: AnyObject>(_ target: T, binding: @escaping (_ target: T)->Int) {
-        weak var weakTarget = target
-        self.numberOfSections = {
-            if let target = weakTarget {
-                return binding(target)
-            }
-            return 0
-        }
-    }
-    /// 返回每组下的cell个数
-    fileprivate var numberOfRowsInSection: ((Int)->Int)?
-    /// 绑定每组下的cell个数回调
-    public func numberOfRowsInSection<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ section: Int)->Int) {
-        weak var weakTarget = target
-        self.numberOfRowsInSection = { (section) in
-            if let target = weakTarget {
-                return binding(target, section)
-            }
-            return 0
-        }
-    }
-    
-    fileprivate var cellInit: ((IndexPath)->UIView?)?
-    /// 初始化cell
-    public func cellInit<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->UIView?) {
-        weak var weakTarget = target
-        self.cellInit = { (indexPath) in
-            if let target = weakTarget {
-                return binding(target, indexPath)
-            }
-            return nil
-        }
-    }
-    
-    fileprivate var headerInit: ((Int)->UIView?)?
-    /// 初始化每组的headerView
-    public func headerInit<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ section: Int) -> UIView?) {
-        weak var weakTarget = target
-        self.headerInit = { (section) in
-            if let target = weakTarget {
-                return binding(target, section)
-            }
-            return nil
-        }
-    }
-    
-    fileprivate var footerInit: ((Int)->UIView?)?
-    /// 初始化每组的footerView
-    public func footerInit<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ section: Int) -> UIView?) {
-        weak var weakTarget = target
-        self.footerInit = { (section) in
-            if let target = weakTarget {
-                return binding(target, section)
-            }
-            return nil
-        }
-    }
-    
-    /// cell点击
-    fileprivate var cellClick: ((IndexPath)->Void)?
-    /// 绑定cell点击回调
-    public func cellClick<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Void) {
-        weak var weakTarget = target
-        self.cellClick = { (indexPath) in
-            if let target = weakTarget {
-                binding(target, indexPath)
-            }
-        }
-    }
-    
-    fileprivate var didScroll: ((CGPoint)->Void)?
-    /// 列表滚动回调
-    public func didScroll<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ contentOffset: CGPoint)->Void) {
-        weak var weakTarget = target
-        self.didScroll = { (contentOffset) in
-            if let target = weakTarget{
-                binding(target, contentOffset)
-            }
-        }
-    }
-    
     // MARK: - Tools
     
-    /// 重新构建cell视图
+    /// 重新构建cell、headerView、footerView视图
     public func reload() {
         cellViewMap.removeAll()
         headerViewList.removeAll()
@@ -275,7 +193,12 @@ public class DrFlexTableView: UIView {
         }
     }
     
-    // MARK: - TableView Paramters
+}
+
+
+// MARK: - TableView Paramters
+
+extension DrFlexTableView {
     
     public override var backgroundColor: UIColor?{
         set {
@@ -430,6 +353,78 @@ public class DrFlexTableView: UIView {
             table.tableFooterView
         }
     }
+    
+}
+
+
+// MARK: - 绑定TableView相关回调
+extension DrFlexTableView {
+    
+    /// 绑定分组个数回调
+    public func numberOfSections<T: AnyObject>(_ target: T, binding: @escaping (_ target: T)->Int) {
+        weak var weakTarget = target
+        self.dataSource?.numberOfSections = {
+            if let target = weakTarget {
+                return binding(target)
+            }
+            return 0
+        }
+    }
+    
+    /// 绑定每组下的cell个数回调
+    public func numberOfRowsInSection<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ section: Int)->Int) {
+        weak var weakTarget = target
+        self.dataSource?.numberOfRowsInSection = { (section) in
+            if let target = weakTarget {
+                return binding(target, section)
+            }
+            return 0
+        }
+    }
+    
+    
+    /// 初始化cell
+    public func cellInit<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->UIView?) {
+        weak var weakTarget = target
+        self.delegate?.cellInit = { (indexPath) in
+            if let target = weakTarget {
+                return binding(target, indexPath)
+            }
+            return nil
+        }
+    }
+    
+    /// 初始化每组的headerView
+    public func headerInit<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ section: Int) -> UIView?) {
+        weak var weakTarget = target
+        self.delegate?.headerInit = { (section) in
+            if let target = weakTarget {
+                return binding(target, section)
+            }
+            return nil
+        }
+    }
+    
+    /// 初始化每组的footerView
+    public func footerInit<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ section: Int) -> UIView?) {
+        weak var weakTarget = target
+        self.delegate?.footerInit = { (section) in
+            if let target = weakTarget {
+                return binding(target, section)
+            }
+            return nil
+        }
+    }
+    
+    /// 绑定cell点击回调
+    public func cellClick<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Void) {
+        weak var weakTarget = target
+        self.delegate?.cellClick = { (indexPath) in
+            if let target = weakTarget {
+                binding(target, indexPath)
+            }
+        }
+    }
 }
 
 
@@ -441,16 +436,22 @@ fileprivate class DrFlexTableDataSource: NSObject, UITableViewDataSource {
     
     weak var flexTable: DrFlexTableView?
     
+    /// 返回分组个数
+    var numberOfSections: (()->Int)?
+    /// 返回每组下的cell个数
+    var numberOfRowsInSection: ((Int)->Int)?
+    
+    
     init(flexTable: DrFlexTableView) {
         self.flexTable = flexTable
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        flexTable?.numberOfSections?() ?? 1
+        numberOfSections?() ?? 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        flexTable?.numberOfRowsInSection?(section) ?? 0
+        numberOfRowsInSection?(section) ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -484,19 +485,30 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
     
     weak var flexTable: DrFlexTableView?
     
+    /// 初始化cell视图
+    var cellInit: ((IndexPath)->UIView?)?
+    /// 初始化headerView视图
+    var headerInit: ((Int)->UIView?)?
+    /// 初始化footerView视图
+    var footerInit: ((Int)->UIView?)?
+    /// cell点击
+    var cellClick: ((IndexPath)->Void)?
+    
+    
+    
     init(flexTable: DrFlexTableView) {
         self.flexTable = flexTable
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        flexTable?.cellClick?(indexPath)
+        cellClick?(indexPath)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let cell = flexTable?.cell(at: indexPath) {
             return cell.frame.height
         }
-        guard let cell = flexTable?.cellInit?(indexPath) else {
+        guard let cell = cellInit?(indexPath) else {
             return 0
         }
         if cell.isYogaEnabled {
@@ -511,7 +523,7 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
         if let header = flexTable?.headerView(atSection: section) {
             return header.frame.height
         }
-        guard let header = flexTable?.headerInit?(section) else {
+        guard let header = headerInit?(section) else {
             switch tableView.style {
             case .grouped, .insetGrouped:
                 return CGFloat.leastNonzeroMagnitude
@@ -531,7 +543,7 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
         if let footer = flexTable?.footerView(atSection: section) {
             return footer.frame.height
         }
-        guard let footer = flexTable?.footerInit?(section) else {
+        guard let footer = footerInit?(section) else {
             switch tableView.style {
             case .grouped, .insetGrouped:
                 return CGFloat.leastNonzeroMagnitude
@@ -569,10 +581,64 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
         return footer
     }
     
+    
+    
     // MARK: - ScrollViewDelegate
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        flexTable?.didScroll?(scrollView.contentOffset)
+        flexTable?.scrollDelegate.didScroll?(scrollView)
+    }
+    
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        flexTable?.scrollDelegate.scrollViewDidZoom?(scrollView)
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        flexTable?.scrollDelegate.scrollViewWillBeginDragging?(scrollView)
+    }
+    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        flexTable?.scrollDelegate.scrollViewWillEndDragging?(scrollView, velocity, targetContentOffset)
+    }
+
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        flexTable?.scrollDelegate.scrollViewDidEndDragging?(scrollView, decelerate)
+    }
+    
+    func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
+        flexTable?.scrollDelegate.scrollViewWillBeginDecelerating?(scrollView)
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        flexTable?.scrollDelegate.scrollViewDidEndDecelerating?(scrollView)
+    }
+    
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        flexTable?.scrollDelegate.scrollViewDidEndScrollingAnimation?(scrollView)
+    }
+    
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        flexTable?.scrollDelegate.viewForZooming?(scrollView)
+    }
+
+    func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
+        flexTable?.scrollDelegate.scrollViewWillBeginZooming?(scrollView, view)
+    }
+
+    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+        flexTable?.scrollDelegate.scrollViewDidEndZooming?(scrollView, view, scale)
+    }
+
+    func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        flexTable?.scrollDelegate.scrollViewShouldScrollToTop?(scrollView) ?? true
+    }
+
+    func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
+        flexTable?.scrollDelegate.scrollViewDidScrollToTop?(scrollView)
+    }
+    
+    func scrollViewDidChangeAdjustedContentInset(_ scrollView: UIScrollView) {
+        flexTable?.scrollDelegate.didChangeAdjustedContentInset?(scrollView)
     }
 }
 
