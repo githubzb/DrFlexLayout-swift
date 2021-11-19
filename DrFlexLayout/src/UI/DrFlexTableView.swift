@@ -24,8 +24,8 @@ public class DrFlexTableView: UIView {
     
     /// 存储每组cell视图
     private lazy var cellViewMap: [Int: DrFlexCellList] = [:]
-    private lazy var headerViewList: [UIView?] = []
-    private lazy var footerViewList: [UIView?] = []
+    private lazy var headerViewMap: [Int: UIView] = [:]
+    private lazy var footerViewMap: [Int: UIView] = [:]
     
     private lazy var _scrollDelegate = DrFlexScrollViewCallback()
     /// UIScrollView代理
@@ -75,8 +75,8 @@ public class DrFlexTableView: UIView {
     /// 重新构建cell、headerView、footerView视图
     public func reload() {
         cellViewMap.removeAll()
-        headerViewList.removeAll()
-        footerViewList.removeAll()
+        headerViewMap.removeAll()
+        footerViewMap.removeAll()
         table.reloadData()
     }
     
@@ -104,6 +104,28 @@ public class DrFlexTableView: UIView {
             table.beginUpdates()
             table.tableFooterView = footer
             table.endUpdates()
+        }
+    }
+    
+    /**
+     增加一组列表视图（这是除了绑定数据源的方式加载列表外，另一种加载列表的方式。使用该方式加载列表时，请不要再使用数据绑定的方式，否则列表显示条数可能不正常）
+     
+     - Parameter section: 组对象
+     - Parameter refresh: 是否立即刷新列表，默认：false（需要手动调用refresh()刷新列表）
+     */
+    public func appendGroup(_ section: DRFlexTableGroup, immediateRefresh refresh: Bool = false) {
+        let sectionIndex: Int
+        if let maxKey = cellViewMap.keys.max() {
+            sectionIndex = maxKey + 1
+        }else {
+            sectionIndex = 0
+        }
+        cellViewMap[sectionIndex] = DrFlexCellList(array: section.cellList)
+        if let header = section.headerView {
+            appendHeaderView(header: header, section: sectionIndex)
+        }
+        if let footer = section.footerView {
+            appendFooterView(footer: footer, section: sectionIndex)
         }
     }
     
@@ -141,10 +163,10 @@ public class DrFlexTableView: UIView {
      - Returns: HeaderView
      */
     public func headerView<T: UIView>(atSection section: Int) -> T? {
-        if section < headerViewList.count, section >= 0 {
-            return headerViewList[section] as? T
+        guard let header = headerViewMap[section] as? T else {
+            return nil
         }
-        return nil
+        return header
     }
     
     /**
@@ -155,10 +177,10 @@ public class DrFlexTableView: UIView {
      - Returns: FooterView
      */
     public func footerView<T: UIView>(atSection section: Int) -> T? {
-        if section < footerViewList.count, section >= 0 {
-            return footerViewList[section] as? T
+        guard let footer = footerViewMap[section] as? T else {
+            return nil
         }
-        return nil
+        return footer
     }
     
     /// 存储cell视图
@@ -177,20 +199,12 @@ public class DrFlexTableView: UIView {
         }
     }
     /// 存储headerView
-    fileprivate func appendHeaderView(header: UIView?, section: Int) {
-        if section < headerViewList.count {
-            headerViewList[section] = header
-        }else {
-            headerViewList.append(header)
-        }
+    fileprivate func appendHeaderView(header: UIView, section: Int) {
+        headerViewMap[section] = header
     }
     /// 存储footerView
-    fileprivate func appendFooterView(footer: UIView?, section: Int) {
-        if section < footerViewList.count {
-            footerViewList[section] = footer
-        }else {
-            footerViewList.append(footer)
-        }
+    fileprivate func appendFooterView(footer: UIView, section: Int) {
+        footerViewMap[section] = footer
     }
     
 }
