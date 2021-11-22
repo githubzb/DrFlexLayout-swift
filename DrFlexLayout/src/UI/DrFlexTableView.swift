@@ -879,6 +879,7 @@ extension DrFlexTableView {
             if let target = weakTarget {
                 return binding(target, indexPath)
             }
+            return false
         }
     }
     
@@ -908,6 +909,69 @@ extension DrFlexTableView {
                 return binding(target)
             }
             return nil
+        }
+    }
+    
+    @available(iOS 13.0, *)
+    public func contextMenuConfiguration<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath, _ point: CGPoint)->UIContextMenuConfiguration?) {
+        weak var weakTarget = target
+        self.delegate?.contextMenuConfiguration = { (indexPath, point) in
+            if let target = weakTarget{
+                return binding(target, indexPath, point)
+            }
+            return nil
+        }
+    }
+    
+    @available(iOS 13.0, *)
+    public func previewForHighlightingContextMenu<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ config: UIContextMenuConfiguration)->UITargetedPreview?) {
+        weak var weakTarget = target
+        self.delegate?.previewForHighlightingContextMenu = { (config) in
+            if let target = weakTarget {
+                return binding(target, config as! UIContextMenuConfiguration) as Any
+            }
+            return nil
+        }
+    }
+    
+    @available(iOS 13.0, *)
+    public func previewForDismissingContextMenu<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ config: UIContextMenuConfiguration)->UITargetedPreview?) {
+        weak var weakTarget = target
+        self.delegate?.previewForDismissingContextMenu = { (config) in
+            if let target = weakTarget {
+                return binding(target, config as! UIContextMenuConfiguration) as Any
+            }
+            return nil
+        }
+    }
+    
+    @available(iOS 13.0, *)
+    public func willPerformPreviewAction<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ config: UIContextMenuConfiguration, _ animator: UIContextMenuInteractionCommitAnimating)->Void) {
+        weak var weakTarget = target
+        self.delegate?.willPerformPreviewAction = { (config, animator) in
+            if let target = weakTarget {
+                binding(target, config as! UIContextMenuConfiguration, animator as! UIContextMenuInteractionCommitAnimating)
+            }
+        }
+    }
+    
+    @available(iOS 13.0, *)
+    public func willDisplayContextMenu<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ config: UIContextMenuConfiguration, _ animator: UIContextMenuInteractionAnimating?)->Void) {
+        weak var weakTarget = target
+        self.delegate?.willDisplayContextMenu = { (config, animator) in
+            if let target = weakTarget {
+                binding(target, config as! UIContextMenuConfiguration, animator as? UIContextMenuInteractionAnimating)
+            }
+        }
+    }
+    
+    @available(iOS 13.0, *)
+    public func willEndContextMenuInteraction<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ config: UIContextMenuConfiguration, _ animator: UIContextMenuInteractionAnimating?)->Void) {
+        weak var weakTarget = target
+        self.delegate?.willEndContextMenuInteraction = { (config, animator) in
+            if let target = weakTarget {
+                binding(target, config as! UIContextMenuConfiguration, animator as? UIContextMenuInteractionAnimating)
+            }
         }
     }
     
@@ -1059,6 +1123,13 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
     var shouldUpdateFocus: ((UITableViewFocusUpdateContext)->Bool)?
     var didUpdateFocus: ((UITableViewFocusUpdateContext, UIFocusAnimationCoordinator)->Void)?
     var indexPathForPreferredFocusedView: (()->IndexPath?)?
+    
+    var contextMenuConfiguration: ((IndexPath, CGPoint)->Any?)?
+    var previewForHighlightingContextMenu: ((Any)->Any?)?
+    var previewForDismissingContextMenu: ((Any)->Any?)?
+    var willPerformPreviewAction: ((Any, Any)->Void)?
+    var willDisplayContextMenu: ((Any, Any?)->Void)?
+    var willEndContextMenuInteraction: ((Any, Any?)->Void)?
     
     
     init(flexTable: DrFlexTableView) {
@@ -1289,7 +1360,7 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
      */
     @available(iOS 13.0, *)
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        contextMenuConfiguration?(index)
+        contextMenuConfiguration?(indexPath, point) as? UIContextMenuConfiguration
     }
 
     /**
@@ -1299,7 +1370,9 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
      * @param configuration  The configuration of the menu about to be displayed by this interaction.
      */
     @available(iOS 13.0, *)
-    optional func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview?
+    func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        previewForHighlightingContextMenu?(configuration) as? UITargetedPreview
+    }
 
     /**
      * @abstract Called when the interaction is about to dismiss. Return a UITargetedPreview describing the desired dismissal target.
@@ -1309,7 +1382,9 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
      * @param configuration  The configuration of the menu displayed by this interaction.
      */
     @available(iOS 13.0, *)
-    optional func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview?
+    func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        previewForDismissingContextMenu?(configuration) as? UITargetedPreview
+    }
 
     /**
      * @abstract Called when the interaction is about to "commit" in response to the user tapping the preview.
@@ -1319,7 +1394,9 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
      * @param animator       Commit animator. Add animations to this object to run them alongside the commit transition.
      */
     @available(iOS 13.0, *)
-    optional func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating)
+    func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        willPerformPreviewAction?(configuration, animator)
+    }
 
     /**
      * @abstract Called when the table view is about to display a menu.
@@ -1329,7 +1406,9 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
      * @param animator        Appearance animator. Add animations to run them alongside the appearance transition.
      */
     @available(iOS 14.0, *)
-    optional func tableView(_ tableView: UITableView, willDisplayContextMenu configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionAnimating?)
+    func tableView(_ tableView: UITableView, willDisplayContextMenu configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionAnimating?) {
+        willDisplayContextMenu?(configuration, animator)
+    }
 
     /**
      * @abstract Called when the table view's context menu interaction is about to end.
@@ -1339,7 +1418,9 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
      * @param animator        Disappearance animator. Add animations to run them alongside the disappearance transition.
      */
     @available(iOS 14.0, *)
-    optional func tableView(_ tableView: UITableView, willEndContextMenuInteraction configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionAnimating?)
+    func tableView(_ tableView: UITableView, willEndContextMenuInteraction configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionAnimating?) {
+        willEndContextMenuInteraction?(configuration, animator)
+    }
     
     
     
