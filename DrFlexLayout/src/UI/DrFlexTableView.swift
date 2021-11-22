@@ -46,6 +46,9 @@ public class DrFlexTableView: UIView {
         if #available(iOS 15.0, *) {
             table.sectionHeaderTopPadding = 0
         }
+        let header = UIView()
+        header.frame = CGRect(x: 0, y: 0, width: 0, height: 0.0001)
+        table.tableHeaderView = header
         table.tableFooterView = UIView()
         super.init(frame: .zero)
         addSubview(table)
@@ -80,8 +83,11 @@ public class DrFlexTableView: UIView {
         table.reloadData()
     }
     
-    /// 刷新列表视图（不会重新构建cell）
+    /// 刷新列表视图（不会重新构建cell，而会对cell重新计算布局）
     public func refresh() {
+        cellViewMap.values.forEach({ $0.forEach({ ($0 as? UIView)?.dr_needLayout = true }) })
+        headerViewMap.values.forEach({ $0.dr_needLayout = true })
+        footerViewMap.values.forEach({ $0.dr_needLayout = true })
         table.reloadData()
     }
     
@@ -127,6 +133,10 @@ public class DrFlexTableView: UIView {
         if let footer = section.footerView {
             appendFooterView(footer: footer, section: sectionIndex)
         }
+        self.groupCount = sectionIndex + 1
+        if refresh {
+            self.refresh()
+        }
     }
     
     /**
@@ -153,6 +163,22 @@ public class DrFlexTableView: UIView {
         guard list.count > row else { return nil }
         guard let cell = list[row] as? T else { return nil }
         return cell
+    }
+    
+    /**
+     获取可见区域的cell视图
+     */
+    public func visibleCells<T: UIView>() -> [T]? {
+        guard let list = indexPathsForVisibleRows else {
+            return nil
+        }
+        var arr = [T]()
+        for indexPath in list {
+            if let cell: T = cell(at: indexPath) {
+                arr.append(cell)
+            }
+        }
+        return arr
     }
     
     /**
@@ -205,6 +231,16 @@ public class DrFlexTableView: UIView {
     /// 存储footerView
     fileprivate func appendFooterView(footer: UIView, section: Int) {
         footerViewMap[section] = footer
+    }
+    
+    /// 组个数
+    fileprivate var groupCount: Int?
+    /// 获取每组的cell个数
+    fileprivate func cellCount(group: Int) -> Int {
+        guard let li = cellViewMap[group] else {
+            return 0
+        }
+        return li.count
     }
     
 }
@@ -292,6 +328,46 @@ extension DrFlexTableView {
         }
     }
     
+    /// show special section index list on right when row count reaches this value. default is 0
+    public var sectionIndexMinimumDisplayRowCount: Int {
+        set {
+            table.sectionIndexMinimumDisplayRowCount = newValue
+        }
+        get {
+            table.sectionIndexMinimumDisplayRowCount
+        }
+    }
+    
+    /// color used for text of the section index
+    public var sectionIndexColor: UIColor? {
+        set {
+            table.sectionIndexColor = newValue
+        }
+        get {
+            table.sectionIndexColor
+        }
+    }
+    
+    /// the background color of the section index while not being touched
+    public var sectionIndexBackgroundColor: UIColor? {
+        set {
+            table.sectionIndexBackgroundColor = newValue
+        }
+        get {
+            table.sectionIndexBackgroundColor
+        }
+    }
+    
+    /// the background color of the section index while it is being touched
+    public var sectionIndexTrackingBackgroundColor: UIColor? {
+        set {
+            table.sectionIndexTrackingBackgroundColor = newValue
+        }
+        get {
+            table.sectionIndexTrackingBackgroundColor
+        }
+    }
+    
     public var separatorStyle: UITableViewCell.SeparatorStyle{
         set {
             table.separatorStyle = newValue
@@ -325,6 +401,21 @@ extension DrFlexTableView {
         }
         get {
             table.separatorEffect
+        }
+    }
+    
+    /// default value is YES
+    public var insetsContentViewsToSafeArea: Bool {
+        set {
+            if #available(iOS 11.0, *) {
+                table.insetsContentViewsToSafeArea = newValue
+            }
+        }
+        get {
+            if #available(iOS 11.0, *) {
+                return table.insetsContentViewsToSafeArea
+            }
+            return true
         }
     }
     
@@ -368,6 +459,100 @@ extension DrFlexTableView {
         }
     }
     
+    public var style: UITableView.Style { table.style }
+    
+    public var isPrefetchingEnabled: Bool {
+        set {
+            if #available(iOS 15.0, *) {
+                table.isPrefetchingEnabled = newValue
+            }
+        }
+        get {
+            if #available(iOS 15.0, *) {
+                return table.isPrefetchingEnabled
+            }
+            return false
+        }
+    }
+    
+    public var backgroundView: UIView? {
+        set {
+            table.backgroundView = newValue
+        }
+        get {
+            table.backgroundView
+        }
+    }
+    
+    @available(iOS 13.0, *)
+    public var contextMenuInteraction: UIContextMenuInteraction? {
+        if #available(iOS 14.0, *) {
+            return table.contextMenuInteraction
+        }
+        return nil
+    }
+    
+    public var numberOfSections: Int { table.numberOfSections }
+    
+}
+
+// MARK: - TableView Methods
+
+extension DrFlexTableView {
+    
+    public func numberOfRows(inSection section: Int) -> Int { table.numberOfRows(inSection: section) }
+    /// includes header, footer and all rows
+    func rect(forSection section: Int) -> CGRect { table.rect(forSection: section) }
+    public func rectForHeader(inSection section: Int) -> CGRect { table.rectForHeader(inSection: section) }
+    public func rectForFooter(inSection section: Int) -> CGRect { table.rectForFooter(inSection: section) }
+    public func rectForRow(at indexPath: IndexPath) -> CGRect { table.rectForRow(at: indexPath) }
+    /// returns nil if point is outside of any row in the table
+    public func indexPathForRow(at point: CGPoint) -> IndexPath? { table.indexPathForRow(at: point) }
+    /// returns nil if rect not valid
+    public func indexPathsForRows(in rect: CGRect) -> [IndexPath]? { table.indexPathsForRows(in: rect) }
+    public var indexPathsForVisibleRows: [IndexPath]? { table.indexPathsForVisibleRows }
+    
+    public func scrollToRow(at indexPath: IndexPath, at scrollPosition: UITableView.ScrollPosition, animated: Bool) {
+        table.scrollToRow(at: indexPath, at: scrollPosition, animated: animated)
+    }
+
+    public func scrollToNearestSelectedRow(at scrollPosition: UITableView.ScrollPosition, animated: Bool) {
+        table.scrollToNearestSelectedRow(at: scrollPosition, animated: animated)
+    }
+    
+    public func moveSection(_ section: Int, toSection newSection: Int) { table.moveSection(section, toSection: newSection) }
+    public func moveRow(at indexPath: IndexPath, to newIndexPath: IndexPath) { table.moveRow(at: indexPath, to: newIndexPath) }
+    
+    public var hasUncommittedUpdates: Bool {
+        if #available(iOS 11.0, *) {
+            return table.hasUncommittedUpdates
+        }
+        return false
+    }
+    
+    public func reloadSectionIndexTitles() { table.reloadSectionIndexTitles() }
+    
+    /// default is NO. setting is not animated.
+    public var isEditing: Bool { table.isEditing }
+    
+    public func setEditing(_ editing: Bool, animated: Bool) { table.setEditing(editing, animated: animated) }
+    
+    // Selection
+    
+    /// returns nil or index path representing section and row of selection.
+    public var indexPathForSelectedRow: IndexPath? { table.indexPathForSelectedRow }
+
+    /// returns nil or a set of index paths representing the sections and rows of the selection.
+    public var indexPathsForSelectedRows: [IndexPath]? { table.indexPathsForSelectedRows }
+    
+    /// Selects and deselects rows. These methods will not call the delegate methods (-tableView:willSelectRowAtIndexPath: or tableView:didSelectRowAtIndexPath:), nor will it send out a notification.
+    public func selectRow(at indexPath: IndexPath?, animated: Bool, scrollPosition: UITableView.ScrollPosition) {
+        table.selectRow(at: indexPath, animated: animated, scrollPosition: scrollPosition)
+    }
+
+    public func deselectRow(at indexPath: IndexPath, animated: Bool) {
+        table.deselectRow(at: indexPath, animated: animated)
+    }
 }
 
 
@@ -439,6 +624,293 @@ extension DrFlexTableView {
             }
         }
     }
+    
+    public func canEditRow<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Bool) {
+        weak var weakTarget = target
+        self.dataSource?.canEditRow = { (indexPath) in
+            if let target = weakTarget {
+                return binding(target, indexPath)
+            }
+            return false
+        }
+    }
+    
+    public func canMoveRow<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Bool) {
+        weak var weakTarget = target
+        self.dataSource?.canMoveRow = { (indexPath) in
+            if let target = weakTarget {
+                return binding(target, indexPath)
+            }
+            return false
+        }
+    }
+    
+    /// 列表右侧索引列表数据绑定
+    public func sectionIndexTitles<T: AnyObject>(_ target: T, binding: @escaping (_ target: T)->[String]?) {
+        weak var weakTarget = target
+        self.dataSource?.sectionIndexTitles = {
+            if let target = weakTarget {
+                return binding(target)
+            }
+            return nil
+        }
+    }
+    
+    /// 列表右侧索引列表index映射到tableview section下标绑定
+    public func sectionForSectionIndex<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ title: String, _ index: Int)->Int) {
+        weak var weakTarget = target
+        self.dataSource?.sectionForSectionIndex = { (title, index) in
+            if let target = weakTarget {
+                return binding(target, title, index)
+            }
+            return 0
+        }
+    }
+    
+    public func commitEditing<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ style: UITableViewCell.EditingStyle, _ indexPath: IndexPath)->Void) {
+        weak var weakTarget = target
+        self.dataSource?.commitEditing = { (style, indexPath) in
+            if let target = weakTarget {
+                binding(target, style, indexPath)
+            }
+        }
+    }
+    
+    public func moveRow<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ from: IndexPath, _ to: IndexPath)->Void) {
+        weak var weakTarget = target
+        self.dataSource?.moveRow = { (from, to) in
+            if let target = weakTarget {
+                binding(target, from, to)
+            }
+        }
+    }
+    
+    public func cellWillDisplay<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ cell: UIView, _ indexPath: IndexPath)->Void) {
+        weak var weakTarget = target
+        self.delegate?.cellWillDisplay = { (cell, indexPath) in
+            if let target = weakTarget {
+                binding(target, cell, indexPath)
+            }
+        }
+    }
+    
+    public func headerWillDisplay<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ header: UIView, _ section: Int)->Void) {
+        weak var weakTarget = target
+        self.delegate?.headerWillDisplay = { (header, section) in
+            if let target = weakTarget {
+                binding(target, header, section)
+            }
+        }
+    }
+    
+    public func footerWillDisplay<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ footer: UIView, _ section: Int)->Void) {
+        weak var weakTarget = target
+        self.delegate?.footerWillDisplay = { (footer, section) in
+            if let target = weakTarget {
+                binding(target, footer, section)
+            }
+        }
+    }
+    
+    public func cellDidEndDisplaying<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ cell: UIView, _ indexPath: IndexPath)->Void) {
+        weak var weakTarget = target
+        self.delegate?.cellDidEndDisplaying = { (cell, indexPath) in
+            if let target = weakTarget {
+                binding(target, cell, indexPath)
+            }
+        }
+    }
+    
+    public func headerDidEndDisplaying<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ header: UIView, _ section: Int)->Void) {
+        weak var weakTarget = target
+        self.delegate?.headerDidEndDisplaying = { (header, section) in
+            if let target = weakTarget {
+                binding(target, header, section)
+            }
+        }
+    }
+    
+    public func footerDidEndDisplaying<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ footer: UIView, _ section: Int)->Void) {
+        weak var weakTarget = target
+        self.delegate?.footerDidEndDisplaying = { (footer, section) in
+            if let target = weakTarget {
+                binding(target, footer, section)
+            }
+        }
+    }
+    
+    public func accessoryButtonTapped<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Void) {
+        weak var weakTarget = target
+        self.delegate?.accessoryButtonTapped = { (indexPath) in
+            if let target = weakTarget {
+                binding(target, indexPath)
+            }
+        }
+    }
+    
+    public func shouldHighlightRow<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Bool) {
+        weak var weakTarget = target
+        self.delegate?.shouldHighlightRow = { (indexPath) in
+            if let target = weakTarget {
+                return binding(target, indexPath)
+            }
+            return false
+        }
+    }
+    
+    public func didHighlightRow<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Void) {
+        weak var weakTarget = target
+        self.delegate?.didHighlightRow = { (indexPath) in
+            if let target = weakTarget {
+                binding(target, indexPath)
+            }
+        }
+    }
+    
+    public func didUnhighlightRow<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Void) {
+        weak var weakTarget = target
+        self.delegate?.didUnhighlightRow = { (indexPath) in
+            if let target = weakTarget {
+                binding(target, indexPath)
+            }
+        }
+    }
+    
+    public func willSelectRow<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->IndexPath?) {
+        weak var weakTarget = target
+        self.delegate?.willSelectRow = { (indexPath) in
+            if let target = weakTarget {
+                return binding(target, indexPath)
+            }
+            return indexPath
+        }
+    }
+    
+    public func willDeselectRow<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->IndexPath?) {
+        weak var weakTarget = target
+        self.delegate?.willDeselectRow = { (indexPath) in
+            if let target = weakTarget {
+                return binding(target, indexPath)
+            }
+            return indexPath
+        }
+    }
+    
+    public func didDeselectRow<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Void) {
+        weak var weakTarget = target
+        self.delegate?.didDeselectRow = { (indexPath) in
+            if let target = weakTarget {
+                binding(target, indexPath)
+            }
+        }
+    }
+    
+    public func editingStyle<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->UITableViewCell.EditingStyle) {
+        weak var weakTarget = target
+        self.delegate?.editingStyle = { (indexPath) in
+            if let target = weakTarget {
+                return binding(target, indexPath)
+            }
+            return .none
+        }
+    }
+    
+    public func titleForDeleteConfirmationButton<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->String?) {
+        weak var weakTarget = target
+        self.delegate?.titleForDeleteConfirmationButton = { (indexPath) in
+            if let target = weakTarget{
+                return binding(target, indexPath)
+            }
+            return nil
+        }
+    }
+    
+    public func shouldIndentWhileEditing<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Bool) {
+        weak var weakTarget = target
+        self.delegate?.shouldIndentWhileEditing = { (indexPath) in
+            if let target = weakTarget{
+                return binding(target, indexPath)
+            }
+            return false
+        }
+    }
+    
+    public func willBeginEditing<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Void) {
+        weak var weakTarget = target
+        self.delegate?.willBeginEditing = { (indexPath) in
+            if let target = weakTarget {
+                binding(target, indexPath)
+            }
+        }
+    }
+    
+    public func didEndEditing<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath?)->Void) {
+        weak var weakTarget = target
+        self.delegate?.didEndEditing = { (indexPath) in
+            if let target = weakTarget {
+                binding(target, indexPath)
+            }
+        }
+    }
+    
+    public func targetIndexPathForMove<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ from: IndexPath, _ to: IndexPath)->IndexPath) {
+        weak var weakTarget = target
+        self.delegate?.targetIndexPathForMove = { (from, to) in
+            if let target = weakTarget {
+                return binding(target, from, to)
+            }
+            return to
+        }
+    }
+    
+    public func indentationLevel<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Int) {
+        weak var weakTarget = target
+        self.delegate?.indentationLevel = { (indexPath) in
+            if let target = weakTarget {
+                return binding(target, indexPath)
+            }
+            return 0
+        }
+    }
+    
+    public func canFocus<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Bool) {
+        weak var weakTarget = target
+        self.delegate?.canFocus = { (indexPath) in
+            if let target = weakTarget {
+                return binding(target, indexPath)
+            }
+        }
+    }
+    
+    public func shouldUpdateFocus<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ context: UITableViewFocusUpdateContext)->Bool) {
+        weak var weakTarget = target
+        self.delegate?.shouldUpdateFocus = { (context) in
+            if let target = weakTarget {
+                return binding(target, context)
+            }
+            return false
+        }
+    }
+    
+    public func didUpdateFocus<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ context: UITableViewFocusUpdateContext, _ coordinator: UIFocusAnimationCoordinator)->Void) {
+        weak var weakTarget = target
+        self.delegate?.didUpdateFocus = { (context, coordinator) in
+            if let target = weakTarget {
+                binding(target, context, coordinator)
+            }
+        }
+    }
+    
+    public func indexPathForPreferredFocusedView<T: AnyObject>(_ target: T, binding: @escaping (_ target: T)->IndexPath?) {
+        weak var weakTarget = target
+        self.delegate?.indexPathForPreferredFocusedView = {
+            if let target = weakTarget {
+                return binding(target)
+            }
+            return nil
+        }
+    }
+    
 }
 
 
@@ -454,18 +926,32 @@ fileprivate class DrFlexTableDataSource: NSObject, UITableViewDataSource {
     var numberOfSections: (()->Int)?
     /// 返回每组下的cell个数
     var numberOfRowsInSection: ((Int)->Int)?
-    
+    var canEditRow: ((IndexPath)->Bool)?
+    var canMoveRow: ((IndexPath)->Bool)?
+    var sectionIndexTitles: (()->[String]?)?
+    var sectionForSectionIndex: ((String, Int)->Int)?
+    var commitEditing: ((UITableViewCell.EditingStyle, IndexPath)->Void)?
+    var moveRow: ((IndexPath, IndexPath)->Void)?
     
     init(flexTable: DrFlexTableView) {
         self.flexTable = flexTable
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        numberOfSections?() ?? 1
+        if let action = numberOfSections {
+            return action()
+        }
+        if let count = flexTable?.groupCount {
+            return count
+        }
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        numberOfRowsInSection?(section) ?? 0
+        if let action = numberOfRowsInSection {
+            return action(section)
+        }
+        return flexTable?.cellCount(group: section) ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -489,6 +975,41 @@ fileprivate class DrFlexTableDataSource: NSObject, UITableViewDataSource {
         nil
     }
     
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        canEditRow?(indexPath) ?? false
+    }
+
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        canMoveRow?(indexPath) ?? false
+    }
+
+    
+    // Index
+    
+    /// return list of section titles to display in section index view (e.g. "ABCD...Z#")
+    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+        sectionIndexTitles?()
+    }
+
+    /// tell table which section corresponds to section title/index (e.g. "B",1))
+    func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
+        sectionForSectionIndex?(title, index) ?? 0
+    }
+
+    
+    // Data manipulation - insert and delete support
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        commitEditing?(editingStyle, indexPath)
+    }
+
+    
+    // Data manipulation - reorder / moving support
+    
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        moveRow?(sourceIndexPath, destinationIndexPath)
+    }
+    
 }
 
 // MARK: - TableView Delegate
@@ -507,7 +1028,37 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
     var footerInit: ((Int)->UIView?)?
     /// cell点击
     var cellClick: ((IndexPath)->Void)?
+    var cellWillDisplay: ((UIView, IndexPath)->Void)?
+    var headerWillDisplay: ((UIView, Int)->Void)?
+    var footerWillDisplay: ((UIView, Int)->Void)?
     
+    var cellDidEndDisplaying: ((UIView, IndexPath)->Void)?
+    var headerDidEndDisplaying: ((UIView, Int)->Void)?
+    var footerDidEndDisplaying: ((UIView, Int)->Void)?
+    
+    var accessoryButtonTapped: ((IndexPath)->Void)?
+    var shouldHighlightRow: ((IndexPath)->Bool)?
+    var didHighlightRow: ((IndexPath)->Void)?
+    var didUnhighlightRow: ((IndexPath)->Void)?
+    
+    var willSelectRow: ((IndexPath)->IndexPath?)?
+    var willDeselectRow: ((IndexPath)->IndexPath?)?
+    var didDeselectRow: ((IndexPath)->Void)?
+    
+    var editingStyle: ((IndexPath)->UITableViewCell.EditingStyle)?
+    
+    var titleForDeleteConfirmationButton: ((IndexPath)->String?)?
+    
+    var shouldIndentWhileEditing: ((IndexPath)->Bool)?
+    var willBeginEditing: ((IndexPath)->Void)?
+    var didEndEditing: ((IndexPath?)->Void)?
+    
+    var targetIndexPathForMove: ((IndexPath, IndexPath)->IndexPath)?
+    var indentationLevel: ((IndexPath)->Int)?
+    var canFocus: ((IndexPath)->Bool)?
+    var shouldUpdateFocus: ((UITableViewFocusUpdateContext)->Bool)?
+    var didUpdateFocus: ((UITableViewFocusUpdateContext, UIFocusAnimationCoordinator)->Void)?
+    var indexPathForPreferredFocusedView: (()->IndexPath?)?
     
     
     init(flexTable: DrFlexTableView) {
@@ -520,6 +1071,11 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let cell = flexTable?.cell(at: indexPath) {
+            if cell.dr_needLayout, cell.isYogaEnabled {
+                cell.dr_needLayout = false
+                cell.dr_resetWidth(tableView.frame.width)
+                cell.dr_flex.layout(mode: .adjustHeight)
+            }
             return cell.frame.height
         }
         guard let cell = cellInit?(indexPath) else {
@@ -535,6 +1091,11 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if let header = flexTable?.headerView(atSection: section) {
+            if header.dr_needLayout, header.isYogaEnabled {
+                header.dr_needLayout = false
+                header.dr_resetWidth(tableView.frame.width)
+                header.dr_flex.layout(mode: .adjustHeight)
+            }
             return header.frame.height
         }
         guard let header = headerInit?(section) else {
@@ -555,6 +1116,11 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         if let footer = flexTable?.footerView(atSection: section) {
+            if footer.dr_needLayout, footer.isYogaEnabled {
+                footer.dr_needLayout = false
+                footer.dr_resetWidth(tableView.frame.width)
+                footer.dr_flex.layout(mode: .adjustHeight)
+            }
             return footer.frame.height
         }
         guard let footer = footerInit?(section) else {
@@ -594,6 +1160,186 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
         }
         return footer
     }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let action = cellWillDisplay else { return }
+        if let cell = flexTable?.cell(at: indexPath) {
+            action(cell, indexPath)
+        }
+    }
+
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        guard let action = headerWillDisplay else { return }
+        if let header = flexTable?.headerView(atSection: section) {
+            action(header, section)
+        }
+    }
+
+    func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
+        guard let action = footerWillDisplay else { return }
+        if let footer = flexTable?.footerView(atSection: section) {
+            action(footer, section)
+        }
+    }
+
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let action = cellDidEndDisplaying else { return }
+        if let cell = flexTable?.cell(at: indexPath) {
+            action(cell, indexPath)
+        }
+    }
+
+    func tableView(_ tableView: UITableView, didEndDisplayingHeaderView view: UIView, forSection section: Int) {
+        guard let action = headerDidEndDisplaying else { return }
+        if let header = flexTable?.headerView(atSection: section) {
+            action(header, section)
+        }
+    }
+
+    func tableView(_ tableView: UITableView, didEndDisplayingFooterView view: UIView, forSection section: Int) {
+        guard let action = footerDidEndDisplaying else { return }
+        if let footer = flexTable?.footerView(atSection: section) {
+            action(footer, section)
+        }
+    }
+
+    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        accessoryButtonTapped?(indexPath)
+    }
+
+    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        shouldHighlightRow?(indexPath) ?? false
+    }
+    
+    func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
+        didHighlightRow?(indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
+        didUnhighlightRow?(indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        willSelectRow?(indexPath) ?? indexPath
+    }
+    
+    func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
+        willDeselectRow?(indexPath) ?? indexPath
+    }
+
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        didDeselectRow?(indexPath)
+    }
+
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        editingStyle?(indexPath) ?? .none
+    }
+
+    func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
+        titleForDeleteConfirmationButton?(indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        shouldIndentWhileEditing?(indexPath) ?? false
+    }
+    
+    func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
+        willBeginEditing?(indexPath)
+    }
+
+    func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {
+        didEndEditing?(indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        targetIndexPathForMove?(sourceIndexPath, proposedDestinationIndexPath) ?? proposedDestinationIndexPath
+    }
+
+    func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
+        indentationLevel?(indexPath) ?? 0
+    }
+
+    func tableView(_ tableView: UITableView, canFocusRowAt indexPath: IndexPath) -> Bool {
+        canFocus?(indexPath) ?? false
+    }
+
+    func tableView(_ tableView: UITableView, shouldUpdateFocusIn context: UITableViewFocusUpdateContext) -> Bool {
+        shouldUpdateFocus?(context) ?? false
+    }
+
+    func tableView(_ tableView: UITableView, didUpdateFocusIn context: UITableViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        didUpdateFocus?(context, coordinator)
+    }
+
+    func indexPathForPreferredFocusedView(in tableView: UITableView) -> IndexPath? {
+        indexPathForPreferredFocusedView?()
+    }
+
+    /**
+     * @abstract Called when the interaction begins.
+     *
+     * @param tableView  This UITableView.
+     * @param indexPath  IndexPath of the row for which a configuration is being requested.
+     * @param point      Location of the interaction in the table view's coordinate space
+     *
+     * @return A UIContextMenuConfiguration describing the menu to be presented. Return nil to prevent the interaction from beginning.
+     *         Returning an empty configuration causes the interaction to begin then fail with a cancellation effect. You might use this
+     *         to indicate to users that it's possible for a menu to be presented from this element, but that there are no actions to
+     *         present at this particular time.
+     */
+    @available(iOS 13.0, *)
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        contextMenuConfiguration?(index)
+    }
+
+    /**
+     * @abstract Called when the interaction begins. Return a UITargetedPreview to override the default preview created by the table view.
+     *
+     * @param tableView      This UITableView.
+     * @param configuration  The configuration of the menu about to be displayed by this interaction.
+     */
+    @available(iOS 13.0, *)
+    optional func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview?
+
+    /**
+     * @abstract Called when the interaction is about to dismiss. Return a UITargetedPreview describing the desired dismissal target.
+     * The interaction will animate the presented menu to the target. Use this to customize the dismissal animation.
+     *
+     * @param tableView      This UITableView.
+     * @param configuration  The configuration of the menu displayed by this interaction.
+     */
+    @available(iOS 13.0, *)
+    optional func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview?
+
+    /**
+     * @abstract Called when the interaction is about to "commit" in response to the user tapping the preview.
+     *
+     * @param tableView      This UITableView.
+     * @param configuration  Configuration of the currently displayed menu.
+     * @param animator       Commit animator. Add animations to this object to run them alongside the commit transition.
+     */
+    @available(iOS 13.0, *)
+    optional func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating)
+
+    /**
+     * @abstract Called when the table view is about to display a menu.
+     *
+     * @param tableView       This UITableView.
+     * @param configuration   The configuration of the menu about to be displayed.
+     * @param animator        Appearance animator. Add animations to run them alongside the appearance transition.
+     */
+    @available(iOS 14.0, *)
+    optional func tableView(_ tableView: UITableView, willDisplayContextMenu configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionAnimating?)
+
+    /**
+     * @abstract Called when the table view's context menu interaction is about to end.
+     *
+     * @param tableView       This UITableView.
+     * @param configuration   Ending configuration.
+     * @param animator        Disappearance animator. Add animations to run them alongside the disappearance transition.
+     */
+    @available(iOS 14.0, *)
+    optional func tableView(_ tableView: UITableView, willEndContextMenuInteraction configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionAnimating?)
     
     
     
@@ -658,6 +1404,7 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
 
 
 
+private var kDrFlexNeedLayoutAssociatedObjectHandle = 50_505_718
 fileprivate extension UIView {
     
     func dr_resetWidth(_ width: CGFloat) {
@@ -665,6 +1412,16 @@ fileprivate extension UIView {
         frame.origin = .zero
         frame.size.width = width
         self.frame = frame
+    }
+    
+    /// 标记视图是否需要重新计算布局
+    var dr_needLayout: Bool {
+        set {
+            objc_setAssociatedObject(self, &kDrFlexNeedLayoutAssociatedObjectHandle, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_ASSIGN)
+        }
+        get {
+            objc_getAssociatedObject(self, &kDrFlexNeedLayoutAssociatedObjectHandle) as? Bool ?? false
+        }
     }
     
 }
@@ -675,9 +1432,9 @@ public struct DRFlexTableGroup {
     public let footerView: UIView?
     public let cellList: [UIView]
     
-    public init(header: UIView?, footer: UIView?, cellList: @autoclosure ()->[UIView]){
-        headerView = header
-        footerView = footer
+    public init(header: @autoclosure ()->UIView?, footer: @autoclosure ()->UIView?, cellList: @autoclosure ()->[UIView]){
+        headerView = header()
+        footerView = footer()
         self.cellList = cellList()
     }
 }
