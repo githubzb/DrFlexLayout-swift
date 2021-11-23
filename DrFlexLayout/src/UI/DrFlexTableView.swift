@@ -577,6 +577,12 @@ extension DrFlexTableView {
         table.scrollToNearestSelectedRow(at: scrollPosition, animated: animated)
     }
     
+    // Allows multiple insert/delete/reload/move calls to be animated simultaneously. Nestable.
+    @available(iOS 11.0, *)
+    public func performBatchUpdates(_ updates: (() -> Void)?, completion: ((Bool) -> Void)? = nil) {
+        table.performBatchUpdates(updates, completion: completion)
+    }
+    
     public func moveSection(_ section: Int, toSection newSection: Int) { table.moveSection(section, toSection: newSection) }
     public func moveRow(at indexPath: IndexPath, to newIndexPath: IndexPath) { table.moveRow(at: indexPath, to: newIndexPath) }
     
