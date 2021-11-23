@@ -27,9 +27,8 @@ public class DrFlexTableView: UIView {
     private lazy var headerViewMap: [Int: UIView] = [:]
     private lazy var footerViewMap: [Int: UIView] = [:]
     
-    private lazy var _scrollDelegate = DrFlexScrollViewCallback()
     /// UIScrollView代理
-    public var scrollDelegate: DrFlexScrollViewCallback { self._scrollDelegate }
+    public let scrollDelegate = DrFlexScrollViewCallback()
     
     private var dataSource: DrFlexTableDataSource?
     private var delegate: DrFlexTableDelegate?

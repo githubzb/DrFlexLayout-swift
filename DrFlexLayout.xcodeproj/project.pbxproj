@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B872454274C960F005EB21D /* DrFlexScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B872453274C960F005EB21D /* DrFlexScrollView.swift */; };
 		1B9730A727474FD70075C149 /* DrFlexLayout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D302011271475C50065254C /* DrFlexLayout.framework */; platformFilter = ios; };
 		1B9730A827474FD70075C149 /* DrFlexLayout.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6D302011271475C50065254C /* DrFlexLayout.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1B9730AF274799460075C149 /* DrFlexScrollViewCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9730AE274799460075C149 /* DrFlexScrollViewCallback.swift */; };
@@ -97,6 +98,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1B872453274C960F005EB21D /* DrFlexScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrFlexScrollView.swift; sourceTree = "<group>"; };
 		1B9730AE274799460075C149 /* DrFlexScrollViewCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrFlexScrollViewCallback.swift; sourceTree = "<group>"; };
 		1B9730B0274B24E10075C149 /* FlexTableViewController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexTableViewController2.swift; sourceTree = "<group>"; };
 		1B9730B3274B2AEA0075C149 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
@@ -341,6 +343,7 @@
 				6DAE9E9B2737CF530062D532 /* UIView+Style.swift */,
 				6D3036E627428B6D008839BB /* DrFlexTableView.swift */,
 				1B9730AE274799460075C149 /* DrFlexScrollViewCallback.swift */,
+				1B872453274C960F005EB21D /* DrFlexScrollView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -507,6 +510,7 @@
 				6D30204B271477200065254C /* Utils.cpp in Sources */,
 				6D3036E727428B6D008839BB /* DrFlexTableView.swift in Sources */,
 				6D669C86271D67E700655F8A /* DrFlextLayout+Enums.swift in Sources */,
+				1B872454274C960F005EB21D /* DrFlexScrollView.swift in Sources */,
 				6D302059271477200065254C /* Yoga.cpp in Sources */,
 				6D302050271477200065254C /* YGValue.cpp in Sources */,
 				6D302042271477200065254C /* event.cpp in Sources */,
