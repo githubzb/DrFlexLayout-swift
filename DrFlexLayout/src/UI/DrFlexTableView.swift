@@ -75,7 +75,7 @@ public class DrFlexTableView: UIView {
     
     // MARK: - Tools
     
-    /// 重新构建cell、headerView、footerView视图
+    /// 重新构建全部cell、headerView、footerView视图
     public func reload() {
         cellViewMap.removeAll()
         headerViewMap.removeAll()
@@ -83,13 +83,68 @@ public class DrFlexTableView: UIView {
         table.reloadData()
     }
     
-    /// 刷新列表视图（不会重新构建cell，而会对cell重新计算布局）
-    public func refresh() {
-        cellViewMap.values.forEach({ $0.forEach({ ($0 as? UIView)?.dr_needLayout = true }) })
-        headerViewMap.values.forEach({ $0.dr_needLayout = true })
-        footerViewMap.values.forEach({ $0.dr_needLayout = true })
+    /// 重新构建指定分组的cell、headerView、footerView视图
+    public func reloadSections(_ sections: IndexSet, with: UITableView.RowAnimation = .none) {
+        for section in sections {
+            cellViewMap[section] = nil
+            headerViewMap[section] = nil
+            footerViewMap[section] = nil
+        }
+        table.reloadSections(sections, with: with)
+    }
+    
+    /// 重新构建指定cell视图
+    public func reloadRows(at: [IndexPath], with: UITableView.RowAnimation = .none) {
+        for indexPath in at {
+            cellViewMap[indexPath.section]?.replaceObject(at: indexPath.row, with: NSNull())
+        }
+        table.reloadRows(at: at, with: with)
+    }
+    
+    /**
+     刷新全部列表视图（不会重新构建cell）
+     
+     - Parameter needLayout: 是否需要重新计算布局（默认：false）
+     */
+    public func refresh(needLayout: Bool = false) {
+        if needLayout {
+            cellViewMap.values.forEach({ $0.forEach({ ($0 as? UIView)?.dr_needLayout = true }) })
+            headerViewMap.values.forEach({ $0.dr_needLayout = true })
+            footerViewMap.values.forEach({ $0.dr_needLayout = true })
+        }
         table.reloadData()
     }
+    
+    /**
+     刷新指定分组（不会重新构建cell）
+     
+     - Parameter sections: 分组下标集合
+     - Parameter with: 刷新动画（默认：无）
+     - Parameter needLayout: 是否需要重新计算布局（默认：false）
+     */
+    public func refreshSections(_ sections: IndexSet, with: UITableView.RowAnimation = .none, needLayout: Bool = false) {
+        if needLayout {
+            for section in sections {
+                cellViewMap[section]?.forEach({($0 as? UIView)?.dr_needLayout = true})
+            }
+        }
+        table.reloadSections(sections, with: with)
+    }
+    
+    /**
+     刷新指定cell（不会重新构建cell）
+     
+     - Parameter at: cell所在下标
+     - Parameter with: 刷新动画（默认：无）
+     - Parameter needLayout: 是否需要重新计算布局（默认：false）
+     */
+    public func refreshRows(at: [IndexPath], with: UITableView.RowAnimation = .none, needLayout: Bool = false) {
+        if needLayout {
+            at.forEach({(cellViewMap[$0.section]?[$0.row] as? UIView)?.dr_needLayout = true})
+        }
+        table.reloadRows(at: at, with: with)
+    }
+    
     
     /// 重新计算tableHeaderView布局
     public func layoutTableHeaderView() {
@@ -126,16 +181,19 @@ public class DrFlexTableView: UIView {
         }else {
             sectionIndex = 0
         }
+        section.cellList.forEach({$0.dr_needLayout = true})
         cellViewMap[sectionIndex] = DrFlexCellList(array: section.cellList)
         if let header = section.headerView {
+            header.dr_needLayout = true
             appendHeaderView(header: header, section: sectionIndex)
         }
         if let footer = section.footerView {
+            footer.dr_needLayout = true
             appendFooterView(footer: footer, section: sectionIndex)
         }
         self.groupCount = sectionIndex + 1
         if refresh {
-            self.refresh()
+            table.reloadData()
         }
     }
     

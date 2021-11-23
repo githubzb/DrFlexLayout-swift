@@ -27,7 +27,6 @@ class FlexTableViewController2: UIViewController {
     }
     
     @objc func loadNews() {
-        print("---------loadNews")
         table.reload() // 清空视图
         
         table.appendGroup(DRFlexTableGroup(header: {
