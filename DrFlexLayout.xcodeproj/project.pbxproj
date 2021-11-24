@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1B872454274C960F005EB21D /* DrFlexScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B872453274C960F005EB21D /* DrFlexScrollView.swift */; };
+		1B87245A274CFDC3005EB21D /* FlexScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B872459274CFDC3005EB21D /* FlexScrollViewController.swift */; };
 		1B9730A727474FD70075C149 /* DrFlexLayout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D302011271475C50065254C /* DrFlexLayout.framework */; platformFilter = ios; };
 		1B9730A827474FD70075C149 /* DrFlexLayout.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6D302011271475C50065254C /* DrFlexLayout.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1B9730AF274799460075C149 /* DrFlexScrollViewCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9730AE274799460075C149 /* DrFlexScrollViewCallback.swift */; };
@@ -99,6 +100,7 @@
 
 /* Begin PBXFileReference section */
 		1B872453274C960F005EB21D /* DrFlexScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrFlexScrollView.swift; sourceTree = "<group>"; };
+		1B872459274CFDC3005EB21D /* FlexScrollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexScrollViewController.swift; sourceTree = "<group>"; };
 		1B9730AE274799460075C149 /* DrFlexScrollViewCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrFlexScrollViewCallback.swift; sourceTree = "<group>"; };
 		1B9730B0274B24E10075C149 /* FlexTableViewController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexTableViewController2.swift; sourceTree = "<group>"; };
 		1B9730B3274B2AEA0075C149 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
@@ -355,6 +357,7 @@
 				6DBEC77B272E38CF006EB388 /* NormalViewController.swift */,
 				6D3036E8274291F9008839BB /* FlexTableViewController.swift */,
 				1B9730B0274B24E10075C149 /* FlexTableViewController2.swift */,
+				1B872459274CFDC3005EB21D /* FlexScrollViewController.swift */,
 			);
 			path = demo;
 			sourceTree = "<group>";
@@ -531,6 +534,7 @@
 			files = (
 				6DBEC77A272E3881006EB388 /* StyleViewController.swift in Sources */,
 				1B9730B1274B24E10075C149 /* FlexTableViewController2.swift in Sources */,
+				1B87245A274CFDC3005EB21D /* FlexScrollViewController.swift in Sources */,
 				6DBEC77C272E38CF006EB388 /* NormalViewController.swift in Sources */,
 				6D3020762714832B0065254C /* ViewController.swift in Sources */,
 				1B9730B4274B2AEA0075C149 /* UIColor.swift in Sources */,

@@ -94,7 +94,11 @@ public class DrFlexScrollView: UIView {
     
     /// 获取容器的子视图
     public var contentSubviews: [UIView] { contentView.subviews }
-    /// 添加子视图到容器中
+    /**
+     添加子视图到容器中
+     
+     - Returns: 添加的子视图
+     */
     @discardableResult
     public func addContentSubview(_ view: UIView) -> UIView {
         contentView.addSubview(view)
