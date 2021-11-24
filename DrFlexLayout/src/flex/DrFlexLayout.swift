@@ -1303,7 +1303,8 @@ public final class DrFlex {
             style?.shadow = DrShadowStyle(offset: offset,
                                           blurRadius: blurRadius,
                                           spreadRadius: spreadRadius,
-                                          color: color)
+                                          color: color,
+                                          opacity: opacity)
             host.dr_style = style
             layoutFinished({ $0?.dr_buildStyle() }, forKey: "_dr_flex_style")
         }else {

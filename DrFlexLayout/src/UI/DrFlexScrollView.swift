@@ -58,7 +58,7 @@ public class DrFlexScrollView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public init(direction: DrFlexScrollDirection, itemAlign: DrFlexScrollItemAlign = .start) {
+    public init(direction: DrFlexScrollDirection, itemAlign: DrFlexScrollItemAlign = .stretch) {
         scrollDirection = direction
         super.init(frame: .zero)
         addSubview(scrollView)
