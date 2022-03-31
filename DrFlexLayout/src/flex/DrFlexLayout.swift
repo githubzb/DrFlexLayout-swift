@@ -54,7 +54,7 @@ public final class DrFlex {
         self.view?.addLayoutFinish(finished, forKey: key)
     }
     
-    // MARK: - Flex item addition and definition
+    // MARK: - Flex item addition 、remove and definition
     
     /**
      This method adds a flex item (UIView) to a flex container. Internally the methods adds the UIView has subviews and enables flexbox.
@@ -80,6 +80,26 @@ public final class DrFlex {
             host.addSubview(view)
             return view.dr_flex
         } else {
+            preconditionFailure("Trying to modify deallocated host view")
+        }
+    }
+    
+    /**
+     This method removes the current view from the parent view and removes the layout nodes along with it.
+     If only the view is removed, but the layout node relationship is not removed, this can cause problems:
+     Child already has a owner, it must be removed first.
+     
+     - Returns: self.view
+     */
+    @discardableResult
+    public func removeFromSuperview() -> UIView {
+        if let host = self.view {
+            if let isYoga = host.superview?.isYogaEnabled, isYoga {
+                host.superview?.yoga.remove(child: host.yoga)
+            }
+            host.removeFromSuperview()
+            return host
+        }else {
             preconditionFailure("Trying to modify deallocated host view")
         }
     }

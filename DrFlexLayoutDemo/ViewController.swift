@@ -74,6 +74,16 @@ class ViewController: UIViewController {
                 }
             }
             
+            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
+                if let btn = flex.view as? UIButton {
+                    btn.setTitle("RemoveView", for: .normal)
+                    btn.setTitleColor(.white, for: .normal)
+                    btn.backgroundColor = .blue
+                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+                    btn.addTarget(self, action: #selector(clickRemoveView(_:)), for: .touchUpInside)
+                }
+            }
+            
         }
         view = v
     }
@@ -108,6 +118,10 @@ class ViewController: UIViewController {
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
-
+    @objc private func clickRemoveView(_ btn: UIButton) {
+        let vc = RemoveViewController()
+        vc.title = btn.title(for: .normal)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
 }
 

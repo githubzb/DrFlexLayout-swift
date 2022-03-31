@@ -166,6 +166,9 @@ typedef NS_OPTIONS(NSInteger, YGDimensionFlexibility) {
 - (CGSize)calculateLayoutWithSize:(CGSize)size
     NS_SWIFT_NAME(calculateLayout(with:));
 
+/// Remove child node
+- (void)removeChild:(YGLayout *)child NS_SWIFT_NAME(remove(child:));
+
 /**
  Returns the number of children that are using Flexbox.
  */

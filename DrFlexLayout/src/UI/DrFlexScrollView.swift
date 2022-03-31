@@ -43,18 +43,21 @@ public enum DrFlexScrollItemAlign {
     }
 }
 
-public class DrFlexScrollView: UIView {
+open class DrFlexScrollView: UIView {
     
     public let scrollDirection: DrFlexScrollDirection
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     private var layoutSubviewsFinishCallback: (()->Void)?
     
+    /// 内部的UIScrollView（注意：请不要直接改变其相关的代理方法，否则内部将无法正确工作）
+    public var innerScrollView: UIScrollView { scrollView }
+    
     /// UIScrollView代理
     public let scrollDelegate = DrFlexScrollViewCallback()
     private var proxy: DrFlexScrollViewProxy?
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     

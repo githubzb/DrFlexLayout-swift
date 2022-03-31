@@ -360,6 +360,12 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
   };
 }
 
+- (void)removeChild:(YGLayout *)child{
+    if (YGNodeGetOwner(child.node) == self.node) {
+        YGNodeRemoveChild(self.node, child.node);
+    }
+}
+
 - (void)async_calculateLayoutWithSize:(CGSize)size complete:(dispatch_block_t)complete{
     NSAssert(self.isEnabled, @"Yoga is not enabled for this view.");
 

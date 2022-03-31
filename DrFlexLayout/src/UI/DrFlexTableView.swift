@@ -16,7 +16,7 @@ fileprivate typealias DrFlexCellList = NSMutableArray
  帮助：当style为grouped或insetGrouped时，列表顶部会多出一部分间隔，此时我们可以设置一个tableHeaderView，
  并将其高度设置为大于0，且小于1的值即可。
  */
-public class DrFlexTableView: UIView {
+open class DrFlexTableView: UIView {
     
     private let table: UITableView
     /// 内部的UITableView（注意：请不要直接改变其相关的代理方法，否则内部将无法正确工作）
@@ -45,6 +45,7 @@ public class DrFlexTableView: UIView {
         if #available(iOS 15.0, *) {
             table.sectionHeaderTopPadding = 0
         }
+        
         let header = UIView()
         header.frame = CGRect(x: 0, y: 0, width: 0, height: 0.0001)
         table.tableHeaderView = header
@@ -55,7 +56,7 @@ public class DrFlexTableView: UIView {
         self.delegate = DrFlexTableDelegate(flexTable: self)
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -306,6 +307,16 @@ public class DrFlexTableView: UIView {
 // MARK: - TableView Paramters
 
 extension DrFlexTableView {
+    
+    @available(iOS 11.0, *)
+    public var contentInsetAdjustmentBehavior: UIScrollView.ContentInsetAdjustmentBehavior {
+        set {
+            table.contentInsetAdjustmentBehavior = newValue
+        }
+        get {
+            table.contentInsetAdjustmentBehavior
+        }
+    }
     
     public override var backgroundColor: UIColor?{
         set {

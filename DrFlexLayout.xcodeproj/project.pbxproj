@@ -14,6 +14,7 @@
 		1B9730AF274799460075C149 /* DrFlexScrollViewCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9730AE274799460075C149 /* DrFlexScrollViewCallback.swift */; };
 		1B9730B1274B24E10075C149 /* FlexTableViewController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9730B0274B24E10075C149 /* FlexTableViewController2.swift */; };
 		1B9730B4274B2AEA0075C149 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9730B3274B2AEA0075C149 /* UIColor.swift */; };
+		5722F22F7DE47218F95DC966 /* Pods_DrFlexLayout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C50A0945D22BDEB640F7E7E8 /* Pods_DrFlexLayout.framework */; };
 		6D302016271475C60065254C /* DrFlexLayout.docc in Sources */ = {isa = PBXBuildFile; fileRef = 6D302015271475C60065254C /* DrFlexLayout.docc */; };
 		6D302017271475C60065254C /* DrFlexLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D302014271475C50065254C /* DrFlexLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6D30203F271477200065254C /* YGNodePrint.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D30201F2714771F0065254C /* YGNodePrint.h */; };
@@ -59,6 +60,9 @@
 		6D30207E2714832D0065254C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D30207C2714832D0065254C /* LaunchScreen.storyboard */; };
 		6D3036E727428B6D008839BB /* DrFlexTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3036E627428B6D008839BB /* DrFlexTableView.swift */; };
 		6D3036E9274291F9008839BB /* FlexTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3036E8274291F9008839BB /* FlexTableViewController.swift */; };
+		6D3262CE27F49E3F00516419 /* DrTableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3262CD27F49E3F00516419 /* DrTableDataSource.swift */; };
+		6D57D8A827F5D64D006D655B /* DrFlexTableView+rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D57D8A727F5D64D006D655B /* DrFlexTableView+rx.swift */; };
+		6D57D8AA27F5E351006D655B /* RemoveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D57D8A927F5E351006D655B /* RemoveViewController.swift */; };
 		6D669C7E271D5E5D00655F8A /* DrFlexLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D669C7D271D5E5D00655F8A /* DrFlexLayout.swift */; };
 		6D669C80271D5FCD00655F8A /* DrFlexLayout+Private.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D669C7F271D5FCD00655F8A /* DrFlexLayout+Private.swift */; };
 		6D669C82271D601B00655F8A /* UIView+DrFlexLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D669C81271D601B00655F8A /* UIView+DrFlexLayout.swift */; };
@@ -67,11 +71,13 @@
 		6D669C8A271D92EA00655F8A /* TestLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D669C89271D92EA00655F8A /* TestLayer.swift */; };
 		6D8D3EA3272D761900E77778 /* DRFlexLayoutTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D8D3EA1272D761900E77778 /* DRFlexLayoutTransaction.h */; };
 		6D8D3EA4272D761900E77778 /* DRFlexLayoutTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D8D3EA2272D761900E77778 /* DRFlexLayoutTransaction.m */; };
+		6D97861E27F1F60E00A54D40 /* Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D97861D27F1F60E00A54D40 /* Source.swift */; };
 		6DAE9E9C2737CF530062D532 /* UIView+Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAE9E9B2737CF530062D532 /* UIView+Style.swift */; };
 		6DBEC77A272E3881006EB388 /* StyleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC779272E3881006EB388 /* StyleViewController.swift */; };
 		6DBEC77C272E38CF006EB388 /* NormalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC77B272E38CF006EB388 /* NormalViewController.swift */; };
 		6DBEC77E272E3C23006EB388 /* DrStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC77D272E3C23006EB388 /* DrStyle.swift */; };
 		6DBEC780272E7194006EB388 /* UIBezierPath+Rounded.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC77F272E7193006EB388 /* UIBezierPath+Rounded.swift */; };
+		DF3B698D9ABB928E1DFFD7C7 /* Pods_DrFlexLayoutDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2844C852721A2E7F7A9013E5 /* Pods_DrFlexLayoutDemo.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +110,9 @@
 		1B9730AE274799460075C149 /* DrFlexScrollViewCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrFlexScrollViewCallback.swift; sourceTree = "<group>"; };
 		1B9730B0274B24E10075C149 /* FlexTableViewController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexTableViewController2.swift; sourceTree = "<group>"; };
 		1B9730B3274B2AEA0075C149 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
+		1FD70F33803BB31D43605C72 /* Pods-DrFlexLayoutDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DrFlexLayoutDemo.debug.xcconfig"; path = "Target Support Files/Pods-DrFlexLayoutDemo/Pods-DrFlexLayoutDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		2844C852721A2E7F7A9013E5 /* Pods_DrFlexLayoutDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DrFlexLayoutDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		286F61C9A924785D65F99114 /* Pods-DrFlexLayoutDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DrFlexLayoutDemo.release.xcconfig"; path = "Target Support Files/Pods-DrFlexLayoutDemo/Pods-DrFlexLayoutDemo.release.xcconfig"; sourceTree = "<group>"; };
 		6D302011271475C50065254C /* DrFlexLayout.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DrFlexLayout.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D302014271475C50065254C /* DrFlexLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrFlexLayout.h; sourceTree = "<group>"; };
 		6D302015271475C60065254C /* DrFlexLayout.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = DrFlexLayout.docc; sourceTree = "<group>"; };
@@ -152,6 +161,9 @@
 		6D30207F2714832D0065254C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6D3036E627428B6D008839BB /* DrFlexTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrFlexTableView.swift; sourceTree = "<group>"; };
 		6D3036E8274291F9008839BB /* FlexTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexTableViewController.swift; sourceTree = "<group>"; };
+		6D3262CD27F49E3F00516419 /* DrTableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrTableDataSource.swift; sourceTree = "<group>"; };
+		6D57D8A727F5D64D006D655B /* DrFlexTableView+rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DrFlexTableView+rx.swift"; sourceTree = "<group>"; };
+		6D57D8A927F5E351006D655B /* RemoveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveViewController.swift; sourceTree = "<group>"; };
 		6D669C7D271D5E5D00655F8A /* DrFlexLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrFlexLayout.swift; sourceTree = "<group>"; };
 		6D669C7F271D5FCD00655F8A /* DrFlexLayout+Private.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DrFlexLayout+Private.swift"; sourceTree = "<group>"; };
 		6D669C81271D601B00655F8A /* UIView+DrFlexLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+DrFlexLayout.swift"; sourceTree = "<group>"; };
@@ -160,11 +172,15 @@
 		6D669C89271D92EA00655F8A /* TestLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayer.swift; sourceTree = "<group>"; };
 		6D8D3EA1272D761900E77778 /* DRFlexLayoutTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DRFlexLayoutTransaction.h; sourceTree = "<group>"; };
 		6D8D3EA2272D761900E77778 /* DRFlexLayoutTransaction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DRFlexLayoutTransaction.m; sourceTree = "<group>"; };
+		6D97861D27F1F60E00A54D40 /* Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Source.swift; sourceTree = "<group>"; };
 		6DAE9E9B2737CF530062D532 /* UIView+Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Style.swift"; sourceTree = "<group>"; };
 		6DBEC779272E3881006EB388 /* StyleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleViewController.swift; sourceTree = "<group>"; };
 		6DBEC77B272E38CF006EB388 /* NormalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalViewController.swift; sourceTree = "<group>"; };
 		6DBEC77D272E3C23006EB388 /* DrStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrStyle.swift; sourceTree = "<group>"; };
 		6DBEC77F272E7193006EB388 /* UIBezierPath+Rounded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBezierPath+Rounded.swift"; sourceTree = "<group>"; };
+		7533D038575FFC1DDCFABC1A /* Pods-DrFlexLayout.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DrFlexLayout.release.xcconfig"; path = "Target Support Files/Pods-DrFlexLayout/Pods-DrFlexLayout.release.xcconfig"; sourceTree = "<group>"; };
+		C50A0945D22BDEB640F7E7E8 /* Pods_DrFlexLayout.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DrFlexLayout.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB4D009D9871E74EA5920226 /* Pods-DrFlexLayout.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DrFlexLayout.debug.xcconfig"; path = "Target Support Files/Pods-DrFlexLayout/Pods-DrFlexLayout.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,6 +188,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5722F22F7DE47218F95DC966 /* Pods_DrFlexLayout.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,6 +197,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1B9730A727474FD70075C149 /* DrFlexLayout.framework in Frameworks */,
+				DF3B698D9ABB928E1DFFD7C7 /* Pods_DrFlexLayoutDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,6 +207,8 @@
 		1B9730A627474FD70075C149 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C50A0945D22BDEB640F7E7E8 /* Pods_DrFlexLayout.framework */,
+				2844C852721A2E7F7A9013E5 /* Pods_DrFlexLayoutDemo.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -208,6 +228,7 @@
 				6D3020702714832A0065254C /* DrFlexLayoutDemo */,
 				6D302012271475C50065254C /* Products */,
 				1B9730A627474FD70075C149 /* Frameworks */,
+				9BF58E88E2B57D4BCB298EEC /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -233,6 +254,7 @@
 		6D30201D271476B30065254C /* src */ = {
 			isa = PBXGroup;
 			children = (
+				6D97861C27F1F5EE00A54D40 /* rx */,
 				6D669C8B271DA4A000655F8A /* UI */,
 				6D30206A271482EA0065254C /* flex */,
 				6D30205D271478180065254C /* oc */,
@@ -350,6 +372,16 @@
 			path = UI;
 			sourceTree = "<group>";
 		};
+		6D97861C27F1F5EE00A54D40 /* rx */ = {
+			isa = PBXGroup;
+			children = (
+				6D97861D27F1F60E00A54D40 /* Source.swift */,
+				6D3262CD27F49E3F00516419 /* DrTableDataSource.swift */,
+				6D57D8A727F5D64D006D655B /* DrFlexTableView+rx.swift */,
+			);
+			path = rx;
+			sourceTree = "<group>";
+		};
 		6DBEC776272E3340006EB388 /* demo */ = {
 			isa = PBXGroup;
 			children = (
@@ -358,8 +390,20 @@
 				6D3036E8274291F9008839BB /* FlexTableViewController.swift */,
 				1B9730B0274B24E10075C149 /* FlexTableViewController2.swift */,
 				1B872459274CFDC3005EB21D /* FlexScrollViewController.swift */,
+				6D57D8A927F5E351006D655B /* RemoveViewController.swift */,
 			);
 			path = demo;
+			sourceTree = "<group>";
+		};
+		9BF58E88E2B57D4BCB298EEC /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				DB4D009D9871E74EA5920226 /* Pods-DrFlexLayout.debug.xcconfig */,
+				7533D038575FFC1DDCFABC1A /* Pods-DrFlexLayout.release.xcconfig */,
+				1FD70F33803BB31D43605C72 /* Pods-DrFlexLayoutDemo.debug.xcconfig */,
+				286F61C9A924785D65F99114 /* Pods-DrFlexLayoutDemo.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -402,6 +446,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6D30201A271475C60065254C /* Build configuration list for PBXNativeTarget "DrFlexLayout" */;
 			buildPhases = (
+				8FB68CE11A9D607A5E8868B8 /* [CP] Check Pods Manifest.lock */,
 				6D30200C271475C50065254C /* Headers */,
 				6D30200D271475C50065254C /* Sources */,
 				6D30200E271475C50065254C /* Frameworks */,
@@ -420,10 +465,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6D3020802714832D0065254C /* Build configuration list for PBXNativeTarget "DrFlexLayoutDemo" */;
 			buildPhases = (
+				B7F12B4DB60DC2014B4E911C /* [CP] Check Pods Manifest.lock */,
 				6D30206B2714832A0065254C /* Sources */,
 				6D30206C2714832A0065254C /* Frameworks */,
 				6D30206D2714832A0065254C /* Resources */,
 				1B9730AB27474FD70075C149 /* Embed Frameworks */,
+				453F7C461DA055B47980B805 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -492,6 +539,70 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		453F7C461DA055B47980B805 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DrFlexLayoutDemo/Pods-DrFlexLayoutDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DrFlexLayoutDemo/Pods-DrFlexLayoutDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DrFlexLayoutDemo/Pods-DrFlexLayoutDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8FB68CE11A9D607A5E8868B8 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DrFlexLayout-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B7F12B4DB60DC2014B4E911C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DrFlexLayoutDemo-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		6D30200D271475C50065254C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -513,6 +624,7 @@
 				6D30204B271477200065254C /* Utils.cpp in Sources */,
 				6D3036E727428B6D008839BB /* DrFlexTableView.swift in Sources */,
 				6D669C86271D67E700655F8A /* DrFlextLayout+Enums.swift in Sources */,
+				6D97861E27F1F60E00A54D40 /* Source.swift in Sources */,
 				1B872454274C960F005EB21D /* DrFlexScrollView.swift in Sources */,
 				6D302059271477200065254C /* Yoga.cpp in Sources */,
 				6D302050271477200065254C /* YGValue.cpp in Sources */,
@@ -522,7 +634,9 @@
 				6D302053271477200065254C /* YGNodePrint.cpp in Sources */,
 				6D302040271477200065254C /* YGLayout.cpp in Sources */,
 				6D302064271478A40065254C /* YGLayoutExtensions.swift in Sources */,
+				6D57D8A827F5D64D006D655B /* DrFlexTableView+rx.swift in Sources */,
 				1B9730AF274799460075C149 /* DrFlexScrollViewCallback.swift in Sources */,
+				6D3262CE27F49E3F00516419 /* DrTableDataSource.swift in Sources */,
 				6D302047271477200065254C /* YGEnums.cpp in Sources */,
 				6D302046271477200065254C /* YGNode.cpp in Sources */,
 			);
@@ -535,6 +649,7 @@
 				6DBEC77A272E3881006EB388 /* StyleViewController.swift in Sources */,
 				1B9730B1274B24E10075C149 /* FlexTableViewController2.swift in Sources */,
 				1B87245A274CFDC3005EB21D /* FlexScrollViewController.swift in Sources */,
+				6D57D8AA27F5E351006D655B /* RemoveViewController.swift in Sources */,
 				6DBEC77C272E38CF006EB388 /* NormalViewController.swift in Sources */,
 				6D3020762714832B0065254C /* ViewController.swift in Sources */,
 				1B9730B4274B2AEA0075C149 /* UIColor.swift in Sources */,
@@ -692,6 +807,7 @@
 		};
 		6D30201B271475C60065254C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DB4D009D9871E74EA5920226 /* Pods-DrFlexLayout.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -724,6 +840,7 @@
 		};
 		6D30201C271475C60065254C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7533D038575FFC1DDCFABC1A /* Pods-DrFlexLayout.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -755,6 +872,7 @@
 		};
 		6D3020812714832D0065254C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1FD70F33803BB31D43605C72 /* Pods-DrFlexLayoutDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -784,6 +902,7 @@
 		};
 		6D3020822714832D0065254C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 286F61C9A924785D65F99114 /* Pods-DrFlexLayoutDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
