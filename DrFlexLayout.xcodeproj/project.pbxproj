@@ -231,6 +231,17 @@
 			path = Categorys;
 			sourceTree = "<group>";
 		};
+		6D0F333B27FF2B96008699E3 /* core */ = {
+			isa = PBXGroup;
+			children = (
+				6D669C8B271DA4A000655F8A /* UI */,
+				6D30206A271482EA0065254C /* flex */,
+				6D30205D271478180065254C /* oc */,
+				6D30201E271476BE0065254C /* yoga */,
+			);
+			path = core;
+			sourceTree = "<group>";
+		};
 		6D302007271475C50065254C = {
 			isa = PBXGroup;
 			children = (
@@ -264,11 +275,8 @@
 		6D30201D271476B30065254C /* src */ = {
 			isa = PBXGroup;
 			children = (
+				6D0F333B27FF2B96008699E3 /* core */,
 				6D97861C27F1F5EE00A54D40 /* rx */,
-				6D669C8B271DA4A000655F8A /* UI */,
-				6D30206A271482EA0065254C /* flex */,
-				6D30205D271478180065254C /* oc */,
-				6D30201E271476BE0065254C /* yoga */,
 			);
 			path = src;
 			sourceTree = "<group>";
