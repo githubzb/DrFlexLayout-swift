@@ -30,6 +30,8 @@ Pod::Spec.new do |spec|
   spec.subspec 'rx' do |ss|
       ss.ios.deployment_target = '10.0'
       ss.source_files  = "DrFlexLayout/src/rx/**/*.{swift}"
+      ss.dependency "RxSwift", "~> 6.5.0"
+      ss.dependency "RxCocoa", "~> 6.5.0"
   end
 
 end
