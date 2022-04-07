@@ -80,6 +80,11 @@ class FlexTableViewController2: UIViewController {
             ]
         }()))
         
+        // 必须实现该方法，并返回true，否则上面的cell，将不会重新布局
+        table.cellUpdate(self) { target, cell, indexPath in
+            true
+        }
+        
         table.refresh() // 这里需要手动刷新
     }
     

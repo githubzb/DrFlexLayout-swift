@@ -145,6 +145,76 @@ open class DrFlexTableView: UIView {
         table.reloadRows(at: at, with: with)
     }
     
+    /**
+     删除指定cell
+     
+     - Parameter at: cell所在下标
+     - Parameter with: 刷新动画（默认：无）
+     */
+    public func deleteRows(at indexs: [IndexPath], with animate: UITableView.RowAnimation = .none) {
+        var idxs: [IndexPath] = []
+        indexs.forEach { path in
+            guard let list = cellViewMap[path.section], path.row < list.count else {
+                return
+            }
+            idxs.append(path)
+            list.removeObject(at: path.row)
+        }
+        table.deleteRows(at: idxs, with: animate)
+    }
+    
+    /**
+     在指定section中指定位置插入cell个数
+     
+     - Parameter rowsCount: 插入cell的个数
+     - Parameter section: section索引
+     - Parameter at: 插入位置下标
+     - Parameter afterNeedLayout: 插入位置后面的视图是否需要重新布局
+     - Parameter with: 刷新动画（默认：无）
+     */
+    public func insertRows(rowsCount: Int,
+                           section: Int,
+                           at insertIndex: Int,
+                           afterNeedLayout: Bool = false,
+                           with animate: UITableView.RowAnimation = .none) {
+        guard let list = cellViewMap[section], insertIndex <= list.count, rowsCount > 0 else {
+            return
+        }
+        var indxs: [IndexPath] = []
+        for i in 0..<rowsCount {
+            list.insert(NSNull(), at: insertIndex + i)
+            indxs.append(IndexPath(row: insertIndex + i, section: section))
+        }
+        if afterNeedLayout {
+            let fromIdx = insertIndex + rowsCount
+            for i in fromIdx..<list.count {
+                (list[i] as? UIView)?.dr_needLayout = true
+            }
+            table.reloadSections(IndexSet([section]), with: animate)
+        }else {
+            table.insertRows(at: indxs, with: animate)
+        }
+    }
+    
+//    /**
+//     删除指定section
+//
+//     - Parameter sections: section所在下标
+//     - Parameter with: 刷新动画（默认：无）
+//     */
+//    public func deleteSections(sections: IndexSet, with animate: UITableView.RowAnimation = .none) {
+//        var secs: [IndexSet.Element] = []
+//        for section in sections {
+//            guard let _ = cellViewMap[section] else {
+//                continue
+//            }
+//            secs.append(section)
+//            cellViewMap.removeValue(forKey: section)
+//        }
+//        if secs.count > 0 {
+//            table.deleteSections(IndexSet(secs), with: animate)
+//        }
+//    }
     
     /// 重新计算tableHeaderView布局
     public func layoutTableHeaderView() {
@@ -689,6 +759,17 @@ extension DrFlexTableView {
         }
     }
     
+    /// 更新cell视图
+    public func cellUpdate<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ cell: UIView, _ indexPath: IndexPath) -> Bool) {
+        weak var weakTarget = target
+        self.delegate?.updateCellData = { (cell, indexPath) in
+            if let target = weakTarget {
+                return binding(target, cell, indexPath)
+            }
+            return false
+        }
+    }
+    
     /// 绑定cell点击回调
     public func cellClick<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Void) {
         weak var weakTarget = target
@@ -1164,6 +1245,8 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
     var headerInit: ((Int)->UIView?)?
     /// 初始化footerView视图
     var footerInit: ((Int)->UIView?)?
+    /// 更新cell视图数据源
+    var updateCellData: ((UIView, IndexPath)->Bool)?
     /// cell点击
     var cellClick: ((IndexPath)->Void)?
     var cellWillDisplay: ((UIView, IndexPath)->Void)?
@@ -1217,9 +1300,11 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let cell = flexTable?.cell(at: indexPath) {
             if cell.dr_needLayout, cell.isYogaEnabled {
-                cell.dr_needLayout = false
-                cell.dr_resetWidth(tableView.frame.width)
-                cell.dr_flex.layout(mode: .adjustHeight)
+                if (updateCellData?(cell, indexPath) ?? false) {
+                    cell.dr_needLayout = false
+                    cell.dr_resetWidth(tableView.frame.width)
+                    cell.dr_flex.layout(mode: .adjustHeight)
+                }
             }
             return cell.frame.height
         }
@@ -1353,7 +1438,7 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        shouldHighlightRow?(indexPath) ?? false
+        return shouldHighlightRow?(indexPath) ?? true // 注意：返回false时，selected回调将不执行
     }
     
     func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {

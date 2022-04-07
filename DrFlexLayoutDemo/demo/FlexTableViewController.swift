@@ -136,6 +136,10 @@ class FlexTableViewController: UIViewController {
             print("------构建cell")
             return NewsItemCell(model: target.list[indexPath.section][indexPath.row])
         }
+        table.cellUpdate(self) { target, cell, indexPath in
+            print("------更新cell")
+            return true // 当返回true时，cell才会重新布局，你可以在这里获取最新数据，进行更新
+        }
         
         table.cellClick(self) { target, indexPath in
             let model = target.list[indexPath.section][indexPath.row]
