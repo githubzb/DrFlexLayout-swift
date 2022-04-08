@@ -11,8 +11,8 @@ Pod::Spec.new do |spec|
   spec.author             = { "zhangbao" => "1126976340@qq.com" }
   spec.platform     = :ios, "10.0"
   spec.swift_version = "5.0"
-# spec.source       = { :git => "https://github.com/githubzb/DrFlexLayout-swift.git", :tag => "#{spec.version}" }
-  spec.source       = { :git => "https://github.com/githubzb/DrFlexLayout-swift.git", :commit => "3fe902f" }
+  spec.source       = { :git => "https://github.com/githubzb/DrFlexLayout-swift.git", :tag => "#{spec.version}" }
+# spec.source       = { :git => "https://github.com/githubzb/DrFlexLayout-swift.git", :commit => "9f2aa34" }
   # spec.exclude_files = "Classes/Exclude"
 
   spec.frameworks = "UIKit", "CoreGraphics"
