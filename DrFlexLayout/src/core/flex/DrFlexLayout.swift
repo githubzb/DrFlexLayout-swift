@@ -77,7 +77,9 @@ public final class DrFlex {
     @discardableResult
     public func addItem(_ view: UIView) -> DrFlex {
         if let host = self.view {
-            host.addSubview(view)
+            if view.superview == nil {
+                host.addSubview(view)
+            }
             return view.dr_flex
         } else {
             preconditionFailure("Trying to modify deallocated host view")
