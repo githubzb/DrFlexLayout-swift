@@ -426,9 +426,7 @@ public final class DrFlex {
      */
     @discardableResult
     public func size(_ size: CGSize?) -> DrFlex {
-        yoga.width = valueOrAuto(size?.width)
-        yoga.height = valueOrAuto(size?.height)
-        return self
+        return self.size(width: size?.width, height: size?.height)
     }
     
     /**
@@ -438,6 +436,27 @@ public final class DrFlex {
     public func size(_ sideLength: CGFloat) -> DrFlex {
         yoga.width = YGValue(sideLength)
         yoga.height = YGValue(sideLength)
+        return self
+    }
+    
+    /**
+     The value specifies the view's width and height in pixels. The value must be non-negative.
+     */
+    @discardableResult
+    public func size(width: CGFloat?, height: CGFloat?) -> DrFlex {
+        yoga.width = valueOrAuto(width)
+        yoga.height = valueOrAuto(height)
+        return self
+    }
+    
+    /**
+     The value specifies the view's width and height in percentage of its container width and height. The value must be non-negative.
+     Example: view.dr_flex.size(widthPercent: 50%, heightPercent: 50%)
+     */
+    @discardableResult
+    public func size(widthPercent: DrPercent, heightPercent: DrPercent) -> DrFlex {
+        yoga.width = YGValue(value: Float(widthPercent.value), unit: .percent)
+        yoga.height = YGValue(value: Float(heightPercent.value), unit: .percent)
         return self
     }
 
