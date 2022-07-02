@@ -32,11 +32,22 @@ class StyleViewController: UIViewController {
             gradient.startPoint = CGPoint(x: 0, y: 0)
             gradient.endPoint = CGPoint(x: 1, y: 1)
             flex.addItem(self.rectView)
-                .size(CGSize(width: 200, height: 100))
+                .size(width: 200, height: 100)
                 .cornerRadius(topLeft: 20, topRight: 0, bottomLeft: 0, bottomRight: 20)
                 .border(width: 2, color: .blue)
                 .gradient(style: gradient)
                 .shadow(offset: CGSize(width: 0, height: 2), blurRadius: 5, color: .black, opacity: 0.5)
+                .justifyContent(.center)
+                .alignItems(.center)
+                .direction(.row)
+                .define { flex in
+                    flex.addItem(UILabel()).define { flex in
+                        let lb = flex.view as! UILabel
+                        lb.text = "效果很酷"
+                        lb.font = .systemFont(ofSize: 14, weight: .bold)
+                        lb.textColor = .blue
+                    }
+                }
             
             flex.addItem(UIButton(type: .custom)).size(CGSize(width: 120, height: 30)).marginTop(10).define { flex in
                 if let btn = flex.view as? UIButton {

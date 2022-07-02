@@ -139,7 +139,7 @@ extension UIView {
         if let gradient = style?.gradient {
             if self.dr_gradientLayer == nil {
                 self.dr_gradientLayer = CAGradientLayer()
-                self.layer.addSublayer(self.dr_gradientLayer!)
+                self.layer.insertSublayer(self.dr_gradientLayer!, at: 0)
             }
             self.dr_gradientLayer?.frame = bounds
             self.dr_gradientLayer?.locations = gradient.locations
@@ -167,7 +167,7 @@ extension UIView {
             self.dr_borderLayer?.removeFromSuperlayer()
             if self.dr_gradientLayer == nil {
                 // 不存在渐变
-                self.layer.addSublayer(self.dr_borderLayer!)
+                self.layer.insertSublayer(self.dr_borderLayer!, at: 0)
             }else {
                 // 存在渐变
                 self.dr_gradientLayer?.addSublayer(self.dr_borderLayer!)

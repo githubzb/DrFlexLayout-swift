@@ -413,6 +413,7 @@ static YGSize YGMeasureView(
                                                     .height = constrainedHeight,
                                                 }];
           });
+          sizeThatFits = _sizeThatFits;
       }
   }
 
