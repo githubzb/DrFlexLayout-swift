@@ -1392,6 +1392,27 @@ public final class DrFlex {
         return self
     }
     
+    /**
+     Set the view display or not
+     */
+    @discardableResult
+    public func display(_ value: Bool = true) -> DrFlex {
+        yoga.display = value ? .flex : .none
+        return self
+    }
+    
+    /**
+     Set the view hidden or display
+     */
+    public var isHidden: Bool {
+        set {
+            yoga.display = newValue ? .none : .flex
+        }
+        get {
+            yoga.display == .none
+        }
+    }
+    
     
     // MARK: - ENUMS
     

@@ -416,7 +416,7 @@ static YGSize YGMeasureView(
           sizeThatFits = _sizeThatFits;
       }
   }
-
+    
   return (YGSize){
       .width = YGSanitizeMeasurement(
           constrainedWidth, sizeThatFits.width, widthMode),
