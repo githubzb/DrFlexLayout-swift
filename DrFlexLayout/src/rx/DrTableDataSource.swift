@@ -12,7 +12,7 @@ import RxCocoa
 
 public class DrTableDataSource<Item> {
     
-    public typealias Element = Source<Item>
+    public typealias Element = DrSource<Item>
     
     public typealias CellBuilder = (_ item: Item, _ indexPath: IndexPath) -> UIView
     public typealias HeaderFooterBuilder = (_ item: SourceSection<Item>, _ section: Int) -> UIView

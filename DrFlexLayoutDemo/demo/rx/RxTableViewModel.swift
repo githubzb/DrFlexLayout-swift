@@ -29,7 +29,7 @@ class RxTableViewModel: Reactor {
     }
     
     struct State {
-        var source = DrFlexLayout.Source<Item>()
+        var source = DrFlexLayout.DrSource<Item>()
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
@@ -46,7 +46,7 @@ class RxTableViewModel: Reactor {
         var _state = state
         switch mutation {
         case let .reloadAll(sections):
-            _state.source = Source(sections: sections)
+            _state.source = DrSource(sections: sections)
             
         case let .append(items, section, type):
             switch type {

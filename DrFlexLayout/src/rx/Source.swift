@@ -42,7 +42,7 @@ public enum Operate {
 
 
 /// 数据源，对数据源的每个修改操作，都对应一个操作符。如果想批量处理，必须在performBatchUpdates的闭包中完成
-public class Source<Item> {
+public class DrSource<Item> {
     
     public typealias Section = SourceSection<Item>
     
@@ -55,7 +55,7 @@ public class Source<Item> {
         self.sections = []
     }
     
-    public init(_ source: Source) {
+    public init(_ source: DrSource) {
         self.sections = source.sections
         source.updateId()
         self.id = source.id
@@ -86,8 +86,14 @@ public class Source<Item> {
     
     @discardableResult
     public func append(models: [Item], section: Int) -> Bool {
-        guard section < sections.count else {
+        guard section < sections.count || section == 0 else {
             return false
+        }
+        guard sections.count > 0 else {
+            self.sections = [Section(items: models)]
+            self.operate = .`init`
+            updateId()
+            return true
         }
         var sec = sections[section]
         sec.items += models
@@ -99,8 +105,14 @@ public class Source<Item> {
     
     @discardableResult
     public func append(model: Item, section: Int) -> Bool {
-        guard section < sections.count else {
+        guard section < sections.count || section == 0 else {
             return false
+        }
+        guard sections.count > 0 else {
+            self.sections = [Section(items: [model])]
+            self.operate = .`init`
+            updateId()
+            return true
         }
         var sec = sections[section]
         sec.items.append(model)
@@ -149,9 +161,15 @@ public class Source<Item> {
     }
     
     @discardableResult
-    public func replace(models: [Item], section: Int) -> Bool {
-        guard section < sections.count else {
+    public func replace(models: [Item], section: Int = 0) -> Bool {
+        guard section < sections.count || section == 0 else {
             return false
+        }
+        guard sections.count > 0 else {
+            self.sections = [Section(items: models)]
+            self.operate = .`init`
+            updateId()
+            return true
         }
         var sec = sections[section]
         sec.items = models
@@ -162,9 +180,15 @@ public class Source<Item> {
     }
     
     @discardableResult
-    public func replace(model: Item, row: Int, section: Int) -> Bool {
-        guard section < sections.count else {
+    public func replace(model: Item, row: Int, section: Int = 0) -> Bool {
+        guard section < sections.count || section == 0 else {
             return false
+        }
+        guard sections.count > 0 else {
+            self.sections = [Section(items: [model])]
+            self.operate = .`init`
+            updateId()
+            return true
         }
         var sec = sections[section]
         guard row < sec.items.count else {
@@ -317,7 +341,7 @@ public class Source<Item> {
     }
     
     /// 批量操作（当需要对数据源进行批量操作时，操作过程必须放在该闭包中完成）
-    public func performBatchUpdates(_ updates: (_ source: Source) -> Operate) {
+    public func performBatchUpdates(_ updates: (_ source: DrSource) -> Operate) {
         self.operate = updates(self)
         updateId()
     }
@@ -331,14 +355,14 @@ public class Source<Item> {
     }
 }
 
-extension Source: Equatable {
+extension DrSource: Equatable {
     
-    public static func == (lhs: Source, rhs: Source) -> Bool {
+    public static func == (lhs: DrSource, rhs: DrSource) -> Bool {
         lhs.id == rhs.id
     }
 }
 
-extension Source: Hashable {
+extension DrSource: Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)

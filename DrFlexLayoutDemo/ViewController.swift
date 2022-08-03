@@ -97,6 +97,16 @@ class ViewController: UIViewController {
             
             flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
                 if let btn = flex.view as? UIButton {
+                    btn.setTitle("RxNormalTableView", for: .normal)
+                    btn.setTitleColor(.white, for: .normal)
+                    btn.backgroundColor = .blue
+                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+                    btn.addTarget(self, action: #selector(clickRxNormalTableView(_:)), for: .touchUpInside)
+                }
+            }
+            
+            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
+                if let btn = flex.view as? UIButton {
                     btn.setTitle("BubbleView", for: .normal)
                     btn.setTitleColor(.white, for: .normal)
                     btn.backgroundColor = .blue
@@ -157,6 +167,12 @@ class ViewController: UIViewController {
     
     @objc private func clickRxTableView(_ btn: UIButton) {
         let vc = RXTableViewController()
+        vc.title = btn.title(for: .normal)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func clickRxNormalTableView(_ btn: UIButton) {
+        let vc = RxNormalTableViewController()
         vc.title = btn.title(for: .normal)
         self.navigationController?.pushViewController(vc, animated: true)
     }
