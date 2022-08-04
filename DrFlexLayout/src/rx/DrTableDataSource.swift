@@ -14,8 +14,8 @@ public class DrTableDataSource<Item> {
     
     public typealias Element = DrSource<Item>
     
-    public typealias CellBuilder = (_ item: Item, _ indexPath: IndexPath) -> UIView
-    public typealias HeaderFooterBuilder = (_ item: SourceSection<Item>, _ section: Int) -> UIView
+    public typealias CellBuilder = (_ item: Item, _ indexPath: IndexPath) -> UIView?
+    public typealias HeaderFooterBuilder = (_ item: SourceSection<Item>, _ section: Int) -> UIView?
     
     private var source: Element?
     private var sourceId: UInt64 = 0

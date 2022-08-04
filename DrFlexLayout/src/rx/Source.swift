@@ -160,6 +160,12 @@ public class DrSource<Item> {
         return true
     }
     
+    public func replace(sections: [Section]) {
+        self.sections = sections
+        self.operate = .`init`
+        updateId()
+    }
+    
     @discardableResult
     public func replace(models: [Item], section: Int = 0) -> Bool {
         guard section < sections.count || section == 0 else {

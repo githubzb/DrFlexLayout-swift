@@ -13,7 +13,6 @@ import RxCocoa
 
 class RxNormalTableViewController: UIViewController, View {
     
-    
     @objc func clickRefreshBtn() {
         reactor?.action.onNext(.reloadData)
     }
@@ -53,5 +52,16 @@ extension RxNormalTableViewController {
             NormalCell(viewModel: item)
         }
         listView.rx.items(dataSource)(reactor.state.map(\.items)).disposed(by: disposeBag)
+        listView.innerTable.rx.didScroll.bind { _ in
+            print("---滚动")
+        }.disposed(by: disposeBag)
+        
+        listView.rx.contentOffset.bind { p in
+            print("1滚动: \(p)")
+        }.disposed(by: disposeBag)
+        
+        listView.rx.contentOffset.bind { p in
+            print("2滚动: \(p)")
+        }.disposed(by: disposeBag)
     }
 }

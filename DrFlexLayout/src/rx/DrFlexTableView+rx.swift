@@ -41,4 +41,26 @@ extension Reactive where Base: DrFlexTableView {
         }
     }
     
+    
+    public var contentOffset: ControlProperty<CGPoint> {
+        let behavior = _contentOffsetBehavior
+        base.scrollDelegate.didScroll(behavior) { target, scrollView in
+            target.accept(scrollView.contentOffset)
+        }
+        let binder = Binder<CGPoint>(base) { (table, offset) in
+            table.contentOffset = offset
+        }
+        return ControlProperty(values: behavior, valueSink: binder)
+    }
+    
+    private var _contentOffsetBehavior: BehaviorRelay<CGPoint> {
+        if let behavior = objc_getAssociatedObject(base, DrKeys.contentOffsetKey) as? BehaviorRelay<CGPoint> {
+            return behavior
+        }
+        let behavior = BehaviorRelay<CGPoint>(value: base.contentOffset)
+        objc_setAssociatedObject(base, DrKeys.contentOffsetKey, behavior, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        return behavior
+    }
 }
+
+

@@ -39,6 +39,7 @@ class NormalReactor: Reactor {
         switch mutation {
         case let .reload(list):
             _state.items.replace(models: list)
+//            _state.items.replace(sections: [SourceSection(items: list)])
         }
         return _state
     }
