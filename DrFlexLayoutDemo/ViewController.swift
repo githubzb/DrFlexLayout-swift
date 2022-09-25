@@ -107,6 +107,36 @@ class ViewController: UIViewController {
             
             flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
                 if let btn = flex.view as? UIButton {
+                    btn.setTitle("RxSwipeMenuTableView", for: .normal)
+                    btn.setTitleColor(.white, for: .normal)
+                    btn.backgroundColor = .blue
+                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+                    btn.addTarget(self, action: #selector(clickTableViewSwipeMenu(_:)), for: .touchUpInside)
+                }
+            }
+            
+            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
+                if let btn = flex.view as? UIButton {
+                    btn.setTitle("RxMutipleSelectTableView", for: .normal)
+                    btn.setTitleColor(.white, for: .normal)
+                    btn.backgroundColor = .blue
+                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+                    btn.addTarget(self, action: #selector(clickTableViewMutipleSelect(_:)), for: .touchUpInside)
+                }
+            }
+            
+            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
+                if let btn = flex.view as? UIButton {
+                    btn.setTitle("RxCustomEditingTableView", for: .normal)
+                    btn.setTitleColor(.white, for: .normal)
+                    btn.backgroundColor = .blue
+                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+                    btn.addTarget(self, action: #selector(clickTableViewCustomEditing(_:)), for: .touchUpInside)
+                }
+            }
+            
+            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
+                if let btn = flex.view as? UIButton {
                     btn.setTitle("BubbleView", for: .normal)
                     btn.setTitleColor(.white, for: .normal)
                     btn.backgroundColor = .blue
@@ -153,6 +183,24 @@ class ViewController: UIViewController {
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
+    @objc private func clickTableViewSwipeMenu(_ btn: UIButton){
+        let vc = FlexTableViewSwipeMenuController()
+        vc.title = btn.title(for: .normal)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func clickTableViewMutipleSelect(_ btn: UIButton){
+        let vc = RxTableViewMultipleController()
+        vc.title = btn.title(for: .normal)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func clickTableViewCustomEditing(_ btn: UIButton){
+        let vc = RxTableViewCustomEditingController()
+        vc.title = btn.title(for: .normal)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
     @objc private func clickScrollView(_ btn: UIButton){
         let vc = FlexScrollViewController()
         vc.title = btn.title(for: .normal)
@@ -188,5 +236,6 @@ class ViewController: UIViewController {
         vc.title = btn.title(for: .normal)
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    
 }
 

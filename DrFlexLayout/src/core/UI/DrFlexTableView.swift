@@ -337,6 +337,19 @@ open class DrFlexTableView: UIView {
         return footer
     }
     
+    /// 设置cell编辑状态
+    fileprivate func setCellEditing(_ isEditing: Bool, animated: Bool) {
+        for section in cellViewMap.keys.sorted(by: <) {
+            if let list = cellViewMap[section] {
+                list.forEach { cell in
+                    if let c = cell as? DrCellEditing {
+                        c.setEditing(isEditing, animated: animated)
+                    }
+                }
+            }
+        }
+    }
+    
     /// 存储cell视图
     fileprivate func appendCell(cell: UIView?, atIndexPath indexPath: IndexPath) {
         let cellView: Any = cell == nil ? NSNull() : cell!
@@ -377,6 +390,42 @@ open class DrFlexTableView: UIView {
 // MARK: - TableView Paramters
 
 extension DrFlexTableView {
+    
+    public var allowsSelection: Bool {
+        set {
+            table.allowsSelection = newValue
+        }
+        get {
+            table.allowsSelection
+        }
+    }
+
+    public var allowsSelectionDuringEditing: Bool {
+        set {
+            table.allowsSelectionDuringEditing = newValue
+        }
+        get {
+            table.allowsSelectionDuringEditing
+        }
+    }
+
+    public var allowsMultipleSelection: Bool {
+        set {
+            table.allowsMultipleSelection = newValue
+        }
+        get {
+            table.allowsMultipleSelection
+        }
+    }
+    
+    public var allowsMultipleSelectionDuringEditing: Bool {
+        set {
+            table.allowsMultipleSelectionDuringEditing = newValue
+        }
+        get {
+            table.allowsMultipleSelectionDuringEditing
+        }
+    }
     
     @available(iOS 11.0, *)
     public var contentInsetAdjustmentBehavior: UIScrollView.ContentInsetAdjustmentBehavior {
@@ -677,9 +726,20 @@ extension DrFlexTableView {
     public func reloadSectionIndexTitles() { table.reloadSectionIndexTitles() }
     
     /// default is NO. setting is not animated.
-    public var isEditing: Bool { table.isEditing }
+    public var isEditing: Bool {
+        set {
+            table.isEditing = newValue
+            setCellEditing(newValue, animated: false)
+        }
+        get {
+            table.isEditing
+        }
+    }
     
-    public func setEditing(_ editing: Bool, animated: Bool) { table.setEditing(editing, animated: animated) }
+    public func setEditing(_ editing: Bool, animated: Bool) {
+        table.setEditing(editing, animated: animated)
+        setCellEditing(editing, animated: animated)
+    }
     
     // Selection
     
@@ -980,6 +1040,17 @@ extension DrFlexTableView {
         }
     }
     
+    @available(iOS 11.0, *)
+    public func trailingSwipeActionsForRowAt<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->UISwipeActionsConfiguration?) {
+        weak var weakTarget = target
+        self.delegate?.trailingSwipeActions = { (indexPath) in
+            if let target = weakTarget {
+                return binding(target, indexPath)
+            }
+            return nil
+        }
+    }
+    
     public func shouldIndentWhileEditing<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ indexPath: IndexPath)->Bool) {
         weak var weakTarget = target
         self.delegate?.shouldIndentWhileEditing = { (indexPath) in
@@ -1175,7 +1246,12 @@ fileprivate class DrFlexTableDataSource: NSObject, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: kDrFlexCellIdentifier, for: indexPath)
-        cell.selectionStyle = .none
+//        cell.selectionStyle = .none // 设置该值会导致多选时，选择按钮点击没有选中状态，因此采用下面方法
+        if cell.selectedBackgroundView == nil {
+            let selectedBgView = UIView()
+            selectedBgView.backgroundColor = tableView.backgroundColor
+            cell.selectedBackgroundView = selectedBgView
+        }
         cell.contentView.backgroundColor = tableView.backgroundColor
         cell.contentView.viewWithTag(kDrCellTag)?.removeFromSuperview()
         if let view = flexTable?.cell(at: indexPath) {
@@ -1270,6 +1346,8 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
     
     var titleForDeleteConfirmationButton: ((IndexPath)->String?)?
     
+    var trailingSwipeActions: ((IndexPath)->Any?)?
+    
     var shouldIndentWhileEditing: ((IndexPath)->Bool)?
     var willBeginEditing: ((IndexPath)->Void)?
     var didEndEditing: ((IndexPath?)->Void)?
@@ -1310,6 +1388,9 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
         }
         guard let cell = cellInit?(indexPath) else {
             return 0
+        }
+        if let c = cell as? DrCellEditing {
+            c.setEditing(tableView.isEditing, animated: false)
         }
         if cell.isYogaEnabled {
             cell.dr_resetWidth(tableView.frame.width)
@@ -1467,6 +1548,11 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
         titleForDeleteConfirmationButton?(indexPath)
+    }
+    
+    @available(iOS 11.0, *)
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        trailingSwipeActions?(indexPath) as? UISwipeActionsConfiguration
     }
     
     func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
@@ -1677,4 +1763,9 @@ public struct DRFlexTableGroup {
         footerView = footer()
         self.cellList = cellList()
     }
+}
+
+
+public protocol DrCellEditing {
+    func setEditing(_ isEditing: Bool, animated: Bool)
 }
