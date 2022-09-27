@@ -339,14 +339,40 @@ open class DrFlexTableView: UIView {
     
     /// 设置cell编辑状态
     fileprivate func setCellEditing(_ isEditing: Bool, animated: Bool) {
-        for section in cellViewMap.keys.sorted(by: <) {
-            if let list = cellViewMap[section] {
-                list.forEach { cell in
-                    if let c = cell as? DrCellEditing {
-                        c.setEditing(isEditing, animated: animated)
-                    }
-                }
+        visibleCells()?.forEach({ cell in
+            if let c = cell as? DrCellEditing, c.isEditing != isEditing {
+                c.setEditing(isEditing, animated: animated)
             }
+        })
+        table.visibleCells.forEach { [weak self] cell in
+            self?.setCellSelectionStyle(cell: cell)
+        }
+    }
+    
+    /// 设置指定cell编辑状态
+    fileprivate func setCellEditing(_ isEditing: Bool, animated: Bool, indexPath: IndexPath) {
+        guard let cell = cell(at: indexPath) as? DrCellEditing, cell.isEditing != isEditing else {
+            return
+        }
+        cell.setEditing(isEditing, animated: animated)
+    }
+    
+    /// 设置cell选中style
+    fileprivate func setCellSelectionStyle(cell: UITableViewCell) {
+        if isEditing {
+            // cell.selectionStyle = .none // 设置该值会导致多选时，选择按钮点击没有选中状态，因此采用下面方法
+            if allowsMultipleSelectionDuringEditing {
+                if cell.multipleSelectionBackgroundView == nil {
+                    let v = UIView()
+                    v.backgroundColor = backgroundColor
+                    cell.multipleSelectionBackgroundView = v
+                }
+                cell.selectionStyle = .default
+            }else {
+                cell.selectionStyle = .none
+            }
+        }else {
+            cell.selectionStyle = .none
         }
     }
     
@@ -1246,12 +1272,6 @@ fileprivate class DrFlexTableDataSource: NSObject, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: kDrFlexCellIdentifier, for: indexPath)
-//        cell.selectionStyle = .none // 设置该值会导致多选时，选择按钮点击没有选中状态，因此采用下面方法
-        if cell.selectedBackgroundView == nil {
-            let selectedBgView = UIView()
-            selectedBgView.backgroundColor = tableView.backgroundColor
-            cell.selectedBackgroundView = selectedBgView
-        }
         cell.contentView.backgroundColor = tableView.backgroundColor
         cell.contentView.viewWithTag(kDrCellTag)?.removeFromSuperview()
         if let view = flexTable?.cell(at: indexPath) {
@@ -1473,6 +1493,8 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        flexTable?.setCellSelectionStyle(cell: cell)
+        flexTable?.setCellEditing(tableView.isEditing, animated: false, indexPath: indexPath)
         guard let action = cellWillDisplay else { return }
         if let cell = flexTable?.cell(at: indexPath) {
             action(cell, indexPath)
@@ -1767,5 +1789,6 @@ public struct DRFlexTableGroup {
 
 
 public protocol DrCellEditing {
+    var isEditing: Bool { get }
     func setEditing(_ isEditing: Bool, animated: Bool)
 }

@@ -55,6 +55,7 @@ class DrMutipleSelectCell: UIView {
     let title: String
     let selected = PublishRelay<(Bool, IndexPath)>()
     let disposeBag = DisposeBag()
+    var isEditing: Bool = false
 }
 
 extension DrMutipleSelectCell: DrTableCellUpdateable {
@@ -68,6 +69,7 @@ extension DrMutipleSelectCell: DrTableCellUpdateable {
 extension DrMutipleSelectCell: DrCellEditing {
     
     func setEditing(_ isEditing: Bool, animated: Bool) {
+        self.isEditing = isEditing
         containerView.subviews.forEach({$0.dr_flex.removeFromSuperview()})
         if isEditing {
             containerView.dr_flex.addItem(selectBtn)

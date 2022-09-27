@@ -160,6 +160,15 @@ public class DrSource<Item> {
         return true
     }
     
+    @discardableResult
+    public func refresh(model: Item, row: Int, section: Int = 0) -> Bool {
+        let res = replace(model: model, row: row, section: section)
+        if res {
+            self.operate = .refreshRow(section: section, row: row)
+        }
+        return res
+    }
+    
     public func replace(sections: [Section]) {
         self.sections = sections
         self.operate = .`init`
@@ -308,7 +317,7 @@ public class DrSource<Item> {
         }
         var sec = self.sections[section]
         var _rows: [Int] = []
-        for i in rows {
+        for i in rows.sorted(by: >) {
             if i < sec.items.count {
                 _rows.append(i)
             }
