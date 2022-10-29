@@ -59,10 +59,48 @@ class NormalViewController: UIViewController {
         view = v
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.addSubview(otherView) // 添加非flex布局视图，不受flex的影响
+        otherView.frame = CGRect(x: 100, y: 100, width: 100, height: 100)
+        otherView.backgroundColor = .green
+    }
+    
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 //        view.dr_flex.layout()
         view.dr_flex.layoutByAsync()
+        
     }
-
+    
+    private let otherView = OtherView()
 }
+
+class OtherView: UIView {
+    
+    private func layoutUI() {
+        v.dr_flex.justifyContent(.center).alignItems(.center).define { flex in
+            flex.addItem().size(30).backgroundColor(.red)
+            flex.addItem().size(30).marginTop(10).backgroundColor(.orange)
+        }
+    }
+    
+    init() {
+        super.init(frame: .zero)
+        addSubview(v)
+        layoutUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        v.frame = bounds
+        v.dr_flex.layout()
+    }
+    
+    let v = UIView()
+}
+

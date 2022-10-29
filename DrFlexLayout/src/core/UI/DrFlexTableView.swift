@@ -27,11 +27,20 @@ open class DrFlexTableView: UIView {
     private lazy var headerViewMap: [Int: UIView] = [:]
     private lazy var footerViewMap: [Int: UIView] = [:]
     
+    fileprivate var dataSource: DrFlexTableDataSource?
+    fileprivate var delegate: DrFlexTableDelegate?
+    
     /// UIScrollView代理
     public let scrollDelegate = DrFlexScrollViewCallback()
     
-    private var dataSource: DrFlexTableDataSource?
-    private var delegate: DrFlexTableDelegate?
+    /// cell高度是否相同（会优化加载速度），默认：false（不相同）
+    public var isSameHeight = false
+    public var isSameSectionHeaderHeight = false
+    public var isSameSectionFooterHeight = false
+    
+    public var sectionHeaderHeight: CGFloat = 0
+    public var sectionFooterHeight: CGFloat = 0
+    
     
     public init(style: UITableView.Style) {
         table = UITableView(frame: .zero, style: style)
@@ -221,9 +230,7 @@ open class DrFlexTableView: UIView {
         if let header = table.tableHeaderView, header.isYogaEnabled {
             header.dr_resetWidth(bounds.width)
             header.dr_flex.layout(mode: .adjustHeight)
-            table.beginUpdates()
             table.tableHeaderView = header
-            table.endUpdates()
         }
     }
     
@@ -232,9 +239,7 @@ open class DrFlexTableView: UIView {
         if let footer = table.tableFooterView, footer.isYogaEnabled {
             footer.dr_resetWidth(bounds.width)
             footer.dr_flex.layout(mode: .adjustHeight)
-            table.beginUpdates()
             table.tableFooterView = footer
-            table.endUpdates()
         }
     }
     
@@ -416,6 +421,15 @@ open class DrFlexTableView: UIView {
 // MARK: - TableView Paramters
 
 extension DrFlexTableView {
+    
+    public var rowHeight: CGFloat {
+        set {
+            table.rowHeight = newValue
+        }
+        get {
+            table.rowHeight
+        }
+    }
     
     public var allowsSelection: Bool {
         set {
@@ -1278,6 +1292,21 @@ fileprivate class DrFlexTableDataSource: NSObject, UITableViewDataSource {
             view.removeFromSuperview()
             view.tag = kDrCellTag
             cell.contentView.addSubview(view)
+        }else {
+            if tableView.rowHeight > 0 {
+                if let cellView = flexTable?.delegate?.cellInit?(indexPath) {
+                    if let c = cellView as? DrCellEditing {
+                        c.setEditing(tableView.isEditing, animated: false)
+                    }
+                    if cellView.isYogaEnabled {
+                        cellView.dr_resetSize(CGSize(width: tableView.frame.width, height: tableView.rowHeight))
+                        cellView.dr_flex.layout()
+                    }
+                    flexTable?.appendCell(cell: cellView, atIndexPath: indexPath)
+                    cellView.tag = kDrCellTag
+                    cell.contentView.addSubview(cellView)
+                }
+            }
         }
         return cell
     }
@@ -1396,12 +1425,20 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        guard tableView.rowHeight <= 0 else {
+            return tableView.rowHeight
+        }
         if let cell = flexTable?.cell(at: indexPath) {
             if cell.dr_needLayout, cell.isYogaEnabled {
                 if (updateCellData?(cell, indexPath) ?? false) {
                     cell.dr_needLayout = false
-                    cell.dr_resetWidth(tableView.frame.width)
-                    cell.dr_flex.layout(mode: .adjustHeight)
+                    if tableView.rowHeight > 0 {
+                        cell.dr_resetSize(CGSize(width: tableView.frame.width, height: tableView.rowHeight))
+                        cell.dr_flex.layout()
+                    }else {
+                        cell.dr_resetWidth(tableView.frame.width)
+                        cell.dr_flex.layout(mode: .adjustHeight)
+                    }
                 }
             }
             return cell.frame.height
@@ -1417,15 +1454,26 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
             cell.dr_flex.layout(mode: .adjustHeight)
         }
         flexTable?.appendCell(cell: cell, atIndexPath: indexPath)
+        if (flexTable?.isSameHeight ?? false) {
+            flexTable?.rowHeight = cell.frame.height
+        }
         return cell.frame.height
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if let height = flexTable?.sectionHeaderHeight, height > 0 {
+            return height
+        }
         if let header = flexTable?.headerView(atSection: section) {
             if header.dr_needLayout, header.isYogaEnabled {
                 header.dr_needLayout = false
-                header.dr_resetWidth(tableView.frame.width)
-                header.dr_flex.layout(mode: .adjustHeight)
+                if let height = flexTable?.sectionHeaderHeight, height > 0 {
+                    header.dr_resetSize(CGSize(width: tableView.frame.width, height: height))
+                    header.dr_flex.layout()
+                }else {
+                    header.dr_resetWidth(tableView.frame.width)
+                    header.dr_flex.layout(mode: .adjustHeight)
+                }
             }
             return header.frame.height
         }
@@ -1442,15 +1490,26 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
             header.dr_flex.layout(mode: .adjustHeight)
         }
         flexTable?.appendHeaderView(header: header, section: section)
+        if let isSame = flexTable?.isSameSectionHeaderHeight, isSame {
+            flexTable?.sectionHeaderHeight = header.frame.height
+        }
         return header.frame.height
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if let height = flexTable?.sectionFooterHeight, height > 0 {
+            return height
+        }
         if let footer = flexTable?.footerView(atSection: section) {
             if footer.dr_needLayout, footer.isYogaEnabled {
                 footer.dr_needLayout = false
-                footer.dr_resetWidth(tableView.frame.width)
-                footer.dr_flex.layout(mode: .adjustHeight)
+                if let height = flexTable?.sectionFooterHeight, height > 0 {
+                    footer.dr_resetSize(CGSize(width: tableView.frame.width, height: height))
+                    footer.dr_flex.layout()
+                }else {
+                    footer.dr_resetWidth(tableView.frame.width)
+                    footer.dr_flex.layout(mode: .adjustHeight)
+                }
             }
             return footer.frame.height
         }
@@ -1467,6 +1526,9 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
             footer.dr_flex.layout(mode: .adjustHeight)
         }
         flexTable?.appendFooterView(footer: footer, section: section)
+        if let isSame = flexTable?.isSameSectionFooterHeight, isSame {
+            flexTable?.sectionFooterHeight = footer.frame.height
+        }
         return footer.frame.height
     }
     
@@ -1477,6 +1539,17 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
             view.removeFromSuperview()
             view.tag = kDrHeaderFooterTag
             header?.contentView.addSubview(view)
+        }else {
+            if let height = flexTable?.sectionHeaderHeight, height > 0 {
+                if let headerView = headerInit?(section) {
+                    if headerView.isYogaEnabled {
+                        headerView.dr_resetSize(CGSize(width: tableView.frame.width, height: height))
+                        headerView.dr_flex.layout()
+                    }
+                    flexTable?.appendHeaderView(header: headerView, section: section)
+                    header?.contentView.addSubview(headerView)
+                }
+            }
         }
         return header
     }
@@ -1488,6 +1561,17 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
             view.removeFromSuperview()
             view.tag = kDrHeaderFooterTag
             footer?.contentView.addSubview(view)
+        }else {
+            if let height = flexTable?.sectionFooterHeight, height > 0 {
+                if let footerView = footerInit?(section) {
+                    if footerView.isYogaEnabled {
+                        footerView.dr_resetSize(CGSize(width: tableView.frame.width, height: height))
+                        footerView.dr_flex.layout()
+                    }
+                    flexTable?.appendFooterView(footer: footerView, section: section)
+                    footer?.contentView.addSubview(footerView)
+                }
+            }
         }
         return footer
     }
@@ -1495,22 +1579,39 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         flexTable?.setCellSelectionStyle(cell: cell)
         flexTable?.setCellEditing(tableView.isEditing, animated: false, indexPath: indexPath)
-        guard let action = cellWillDisplay else { return }
-        if let cell = flexTable?.cell(at: indexPath) {
-            action(cell, indexPath)
+        if tableView.rowHeight > 0,
+           let cellView = flexTable?.cell(at: indexPath), cellView.isYogaEnabled, cellView.dr_needLayout {
+            cellView.dr_needLayout = false
+            if (updateCellData?(cell, indexPath) ?? false) {
+                cellView.dr_resetSize(CGSize(width: tableView.frame.width, height: tableView.rowHeight))
+                cellView.dr_flex.layout()
+            }
+        }
+        if let action = cellWillDisplay, let cellView = flexTable?.cell(at: indexPath) {
+            action(cellView, indexPath)
         }
     }
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        guard let action = headerWillDisplay else { return }
-        if let header = flexTable?.headerView(atSection: section) {
+        if let height = flexTable?.sectionHeaderHeight, height > 0,
+           let header = flexTable?.headerView(atSection: section), header.isYogaEnabled, header.dr_needLayout {
+            header.dr_needLayout = false
+            header.dr_resetSize(CGSize(width: tableView.frame.width, height: height))
+            header.dr_flex.layout()
+        }
+        if let action = headerWillDisplay, let header = flexTable?.headerView(atSection: section) {
             action(header, section)
         }
     }
 
     func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
-        guard let action = footerWillDisplay else { return }
-        if let footer = flexTable?.footerView(atSection: section) {
+        if let height = flexTable?.sectionFooterHeight, height > 0,
+           let footer = flexTable?.footerView(atSection: section), footer.isYogaEnabled, footer.dr_needLayout {
+            footer.dr_needLayout = false
+            footer.dr_resetSize(CGSize(width: tableView.frame.width, height: height))
+            footer.dr_flex.layout()
+        }
+        if let action = footerWillDisplay, let footer = flexTable?.footerView(atSection: section) {
             action(footer, section)
         }
     }
@@ -1759,6 +1860,13 @@ fileprivate extension UIView {
         var frame = frame
         frame.origin = .zero
         frame.size.width = width
+        self.frame = frame
+    }
+    
+    func dr_resetSize(_ size: CGSize) {
+        var frame = frame
+        frame.origin = .zero
+        frame.size = size
         self.frame = frame
     }
     
