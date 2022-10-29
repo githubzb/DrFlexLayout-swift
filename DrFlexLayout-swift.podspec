@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "DrFlexLayout-swift"
-  spec.version      = "1.2.0"
+  spec.version      = "1.2.1"
   spec.summary      = "This is a layout framework based on yoga package."
   spec.description  = <<-DESC
                       This is a layout framework based on yoga package, it is easy to use flex layout, and implements some encapsulation of UITableView, UIScrollView. You can also customize the appearance of UIView, including: shadows, rounded corners, gradients, and borders.
