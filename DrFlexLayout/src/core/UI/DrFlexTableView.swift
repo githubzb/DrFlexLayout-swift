@@ -12,13 +12,33 @@ fileprivate let kDrFlexHeaderFooterIdentifier = "DrFlexTableView.flexHeaderFoote
 
 fileprivate typealias DrFlexCellList = NSMutableArray
 
+
+class _TableView: UITableView {
+    
+    weak var touchHook: DrScrollViewTouchHook?
+    
+    override func touchesShouldBegin(_ touches: Set<UITouch>, with event: UIEvent?, in view: UIView) -> Bool {
+        guard let hook = touchHook else {
+            return super.touchesShouldBegin(touches, with: event, in: view)
+        }
+        return hook.touchesShouldBegin(touches, with: event, in: view)
+    }
+    
+    override func touchesShouldCancel(in view: UIView) -> Bool {
+        guard let hook = touchHook else {
+            return super.touchesShouldCancel(in: view)
+        }
+        return hook.touchesShouldCancel(in: view)
+    }
+}
+
 /**
  帮助：当style为grouped或insetGrouped时，列表顶部会多出一部分间隔，此时我们可以设置一个tableHeaderView，
  并将其高度设置为大于0，且小于1的值即可。
  */
-open class DrFlexTableView: UIView {
+open class DrFlexTableView: UIView, DrScrollViewTouchHook {
     
-    private let table: UITableView
+    private let table: _TableView
     /// 内部的UITableView（注意：请不要直接改变其相关的代理方法，否则内部将无法正确工作）
     public var innerTable: UITableView { table }
     
@@ -43,7 +63,7 @@ open class DrFlexTableView: UIView {
     
     
     public init(style: UITableView.Style) {
-        table = UITableView(frame: .zero, style: style)
+        table = _TableView(frame: .zero, style: style)
         table.backgroundColor = .white
         table.estimatedRowHeight = 0
         table.estimatedSectionHeaderHeight = 0
@@ -63,6 +83,7 @@ open class DrFlexTableView: UIView {
         addSubview(table)
         self.dataSource = DrFlexTableDataSource(flexTable: self)
         self.delegate = DrFlexTableDelegate(flexTable: self)
+        table.touchHook = self
     }
     
     required public init?(coder: NSCoder) {
@@ -340,6 +361,14 @@ open class DrFlexTableView: UIView {
             return nil
         }
         return footer
+    }
+    
+    public func touchesShouldBegin(_ touches: Set<UITouch>, with event: UIEvent?, in view: UIView) -> Bool {
+        true
+    }
+    
+    public func touchesShouldCancel(in view: UIView) -> Bool {
+        view is UIControl
     }
     
     /// 设置cell编辑状态
@@ -1855,6 +1884,20 @@ fileprivate class DrFlexTableDelegate: NSObject, UITableViewDelegate {
 
 private var kDrFlexNeedLayoutAssociatedObjectHandle = 50_505_718
 fileprivate extension UIView {
+     
+    /// 标记视图是否需要重新计算布局
+    var dr_needLayout: Bool {
+        set {
+            objc_setAssociatedObject(self, &kDrFlexNeedLayoutAssociatedObjectHandle, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_ASSIGN)
+        }
+        get {
+            objc_getAssociatedObject(self, &kDrFlexNeedLayoutAssociatedObjectHandle) as? Bool ?? false
+        }
+    }
+    
+}
+
+extension UIView {
     
     func dr_resetWidth(_ width: CGFloat) {
         var frame = frame
@@ -1869,17 +1912,6 @@ fileprivate extension UIView {
         frame.size = size
         self.frame = frame
     }
-    
-    /// 标记视图是否需要重新计算布局
-    var dr_needLayout: Bool {
-        set {
-            objc_setAssociatedObject(self, &kDrFlexNeedLayoutAssociatedObjectHandle, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_ASSIGN)
-        }
-        get {
-            objc_getAssociatedObject(self, &kDrFlexNeedLayoutAssociatedObjectHandle) as? Bool ?? false
-        }
-    }
-    
 }
 
 

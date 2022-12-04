@@ -89,6 +89,10 @@
 		6DAC1E3F289AB02200497AAA /* NormalCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAC1E3E289AB02200497AAA /* NormalCell.swift */; };
 		6DAC1E41289AB12300497AAA /* NormalReactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAC1E40289AB12300497AAA /* NormalReactor.swift */; };
 		6DAE9E9C2737CF530062D532 /* UIView+Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAE9E9B2737CF530062D532 /* UIView+Style.swift */; };
+		6DB33C5A293C2E8F005FD9D6 /* DrScrollViewTouchHook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB33C59293C2E8F005FD9D6 /* DrScrollViewTouchHook.swift */; };
+		6DB33C5D293C3539005FD9D6 /* DrTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB33C5C293C3539005FD9D6 /* DrTableView.swift */; };
+		6DB33C60293C3909005FD9D6 /* DrTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB33C5F293C3909005FD9D6 /* DrTableViewDataSource.swift */; };
+		6DB33C63293C9AB4005FD9D6 /* DrTableNormalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB33C62293C9AB4005FD9D6 /* DrTableNormalViewController.swift */; };
 		6DBEC77A272E3881006EB388 /* StyleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC779272E3881006EB388 /* StyleViewController.swift */; };
 		6DBEC77C272E38CF006EB388 /* NormalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC77B272E38CF006EB388 /* NormalViewController.swift */; };
 		6DBEC77E272E3C23006EB388 /* DrStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBEC77D272E3C23006EB388 /* DrStyle.swift */; };
@@ -96,6 +100,7 @@
 		6DD63EE128026AA600AFD7EF /* BubbleMaskLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD63EE028026AA600AFD7EF /* BubbleMaskLayer.swift */; };
 		6DD63EE52802B5B700AFD7EF /* BubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD63EE42802B5B700AFD7EF /* BubbleView.swift */; };
 		6DD63EE72802B6E300AFD7EF /* BubbleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD63EE62802B6E300AFD7EF /* BubbleViewController.swift */; };
+		6DEBD18229330C310049CEEF /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEBD18129330C310049CEEF /* CollectionViewController.swift */; };
 		DF3B698D9ABB928E1DFFD7C7 /* Pods_DrFlexLayoutDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2844C852721A2E7F7A9013E5 /* Pods_DrFlexLayoutDemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -209,6 +214,10 @@
 		6DAC1E3E289AB02200497AAA /* NormalCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalCell.swift; sourceTree = "<group>"; };
 		6DAC1E40289AB12300497AAA /* NormalReactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalReactor.swift; sourceTree = "<group>"; };
 		6DAE9E9B2737CF530062D532 /* UIView+Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Style.swift"; sourceTree = "<group>"; };
+		6DB33C59293C2E8F005FD9D6 /* DrScrollViewTouchHook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrScrollViewTouchHook.swift; sourceTree = "<group>"; };
+		6DB33C5C293C3539005FD9D6 /* DrTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrTableView.swift; sourceTree = "<group>"; };
+		6DB33C5F293C3909005FD9D6 /* DrTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrTableViewDataSource.swift; sourceTree = "<group>"; };
+		6DB33C62293C9AB4005FD9D6 /* DrTableNormalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrTableNormalViewController.swift; sourceTree = "<group>"; };
 		6DBEC779272E3881006EB388 /* StyleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleViewController.swift; sourceTree = "<group>"; };
 		6DBEC77B272E38CF006EB388 /* NormalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalViewController.swift; sourceTree = "<group>"; };
 		6DBEC77D272E3C23006EB388 /* DrStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrStyle.swift; sourceTree = "<group>"; };
@@ -216,6 +225,7 @@
 		6DD63EE028026AA600AFD7EF /* BubbleMaskLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleMaskLayer.swift; sourceTree = "<group>"; };
 		6DD63EE42802B5B700AFD7EF /* BubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleView.swift; sourceTree = "<group>"; };
 		6DD63EE62802B6E300AFD7EF /* BubbleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleViewController.swift; sourceTree = "<group>"; };
+		6DEBD18129330C310049CEEF /* CollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewController.swift; sourceTree = "<group>"; };
 		7533D038575FFC1DDCFABC1A /* Pods-DrFlexLayout.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DrFlexLayout.release.xcconfig"; path = "Target Support Files/Pods-DrFlexLayout/Pods-DrFlexLayout.release.xcconfig"; sourceTree = "<group>"; };
 		C50A0945D22BDEB640F7E7E8 /* Pods_DrFlexLayout.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DrFlexLayout.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB4D009D9871E74EA5920226 /* Pods-DrFlexLayout.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DrFlexLayout.debug.xcconfig"; path = "Target Support Files/Pods-DrFlexLayout/Pods-DrFlexLayout.debug.xcconfig"; sourceTree = "<group>"; };
@@ -415,6 +425,7 @@
 				6D3036E627428B6D008839BB /* DrFlexTableView.swift */,
 				1B9730AE274799460075C149 /* DrFlexScrollViewCallback.swift */,
 				1B872453274C960F005EB21D /* DrFlexScrollView.swift */,
+				6DB33C59293C2E8F005FD9D6 /* DrScrollViewTouchHook.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -474,9 +485,28 @@
 			path = normal;
 			sourceTree = "<group>";
 		};
+		6DB33C5E293C38D2005FD9D6 /* tableView */ = {
+			isa = PBXGroup;
+			children = (
+				6DB33C5C293C3539005FD9D6 /* DrTableView.swift */,
+				6DB33C5F293C3909005FD9D6 /* DrTableViewDataSource.swift */,
+			);
+			path = tableView;
+			sourceTree = "<group>";
+		};
+		6DB33C61293C9A6A005FD9D6 /* drtableViewTest */ = {
+			isa = PBXGroup;
+			children = (
+				6DB33C62293C9AB4005FD9D6 /* DrTableNormalViewController.swift */,
+			);
+			path = drtableViewTest;
+			sourceTree = "<group>";
+		};
 		6DBEC776272E3340006EB388 /* demo */ = {
 			isa = PBXGroup;
 			children = (
+				6DB33C61293C9A6A005FD9D6 /* drtableViewTest */,
+				6DEBD18029330C110049CEEF /* collectionView */,
 				6D9AB24C27FA963D00E26458 /* rx */,
 				6DBEC779272E3881006EB388 /* StyleViewController.swift */,
 				6DBEC77B272E38CF006EB388 /* NormalViewController.swift */,
@@ -494,6 +524,7 @@
 		6DD63EDE2802625700AFD7EF /* components */ = {
 			isa = PBXGroup;
 			children = (
+				6DB33C5E293C38D2005FD9D6 /* tableView */,
 				6DD63EDF2802627E00AFD7EF /* bubble */,
 			);
 			path = components;
@@ -506,6 +537,14 @@
 				6DD63EE42802B5B700AFD7EF /* BubbleView.swift */,
 			);
 			path = bubble;
+			sourceTree = "<group>";
+		};
+		6DEBD18029330C110049CEEF /* collectionView */ = {
+			isa = PBXGroup;
+			children = (
+				6DEBD18129330C310049CEEF /* CollectionViewController.swift */,
+			);
+			path = collectionView;
 			sourceTree = "<group>";
 		};
 		9BF58E88E2B57D4BCB298EEC /* Pods */ = {
@@ -727,10 +766,12 @@
 				6D302067271478A40065254C /* UIView+Yoga.m in Sources */,
 				6D17F03F289C171F00334DCD /* Keys.swift in Sources */,
 				6DAE9E9C2737CF530062D532 /* UIView+Style.swift in Sources */,
+				6DB33C60293C3909005FD9D6 /* DrTableViewDataSource.swift in Sources */,
 				6DD63EE128026AA600AFD7EF /* BubbleMaskLayer.swift in Sources */,
 				6D302056271477200065254C /* experiments.cpp in Sources */,
 				6D30204F271477200065254C /* log.cpp in Sources */,
 				6DBEC77E272E3C23006EB388 /* DrStyle.swift in Sources */,
+				6DB33C5A293C2E8F005FD9D6 /* DrScrollViewTouchHook.swift in Sources */,
 				6D302068271478A40065254C /* YGLayout.m in Sources */,
 				6D302048271477200065254C /* YGConfig.cpp in Sources */,
 				6D302016271475C60065254C /* DrFlexLayout.docc in Sources */,
@@ -753,6 +794,7 @@
 				6DD63EE52802B5B700AFD7EF /* BubbleView.swift in Sources */,
 				6D57D8A827F5D64D006D655B /* DrFlexTableView+rx.swift in Sources */,
 				1B9730AF274799460075C149 /* DrFlexScrollViewCallback.swift in Sources */,
+				6DB33C5D293C3539005FD9D6 /* DrTableView.swift in Sources */,
 				6D3262CE27F49E3F00516419 /* DrTableDataSource.swift in Sources */,
 				6D302047271477200065254C /* YGEnums.cpp in Sources */,
 				6D302046271477200065254C /* YGNode.cpp in Sources */,
@@ -763,7 +805,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6DEBD18229330C310049CEEF /* CollectionViewController.swift in Sources */,
 				6DBEC77A272E3881006EB388 /* StyleViewController.swift in Sources */,
+				6DB33C63293C9AB4005FD9D6 /* DrTableNormalViewController.swift in Sources */,
 				1B9730B1274B24E10075C149 /* FlexTableViewController2.swift in Sources */,
 				6D66E0452875BAC70010C424 /* HiddenViewController.swift in Sources */,
 				6D9AB25127FAE5CE00E26458 /* RXNewsItemView.swift in Sources */,

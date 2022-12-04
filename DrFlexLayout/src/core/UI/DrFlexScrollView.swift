@@ -43,10 +43,29 @@ public enum DrFlexScrollItemAlign {
     }
 }
 
-open class DrFlexScrollView: UIView {
+class _ScrollView: UIScrollView {
+    
+    weak var touchHook: DrScrollViewTouchHook?;
+    
+    override func touchesShouldBegin(_ touches: Set<UITouch>, with event: UIEvent?, in view: UIView) -> Bool {
+        guard let hook = touchHook else {
+            return super.touchesShouldBegin(touches, with: event, in: view)
+        }
+        return hook.touchesShouldBegin(touches, with: event, in: view)
+    }
+    
+    override func touchesShouldCancel(in view: UIView) -> Bool {
+        guard let hook = touchHook else {
+            return super.touchesShouldCancel(in: view)
+        }
+        return hook.touchesShouldCancel(in: view)
+    }
+}
+
+open class DrFlexScrollView: UIView, DrScrollViewTouchHook {
     
     public let scrollDirection: DrFlexScrollDirection
-    private let scrollView = UIScrollView()
+    private let scrollView = _ScrollView()
     private let contentView = UIView()
     private var layoutSubviewsFinishCallback: (()->Void)?
     
@@ -68,6 +87,7 @@ open class DrFlexScrollView: UIView {
         scrollView.addSubview(contentView)
         proxy = DrFlexScrollViewProxy(binder: scrollDelegate)
         scrollView.delegate = proxy
+        scrollView.touchHook = self
         switch direction {
         case .horizontal:
             contentView.dr_flex.direction(.row).wrap(.noWrap).alignItems(itemAlign.flexValue)
@@ -128,6 +148,13 @@ open class DrFlexScrollView: UIView {
         }
     }
     
+    public func touchesShouldBegin(_ touches: Set<UITouch>, with event: UIEvent?, in view: UIView) -> Bool {
+        true
+    }
+    
+    public func touchesShouldCancel(in view: UIView) -> Bool {
+        view is UIControl
+    }
 }
 
 

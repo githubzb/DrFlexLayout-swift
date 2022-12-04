@@ -8,250 +8,58 @@
 import UIKit
 import DrFlexLayout
 
-class ViewController: UIViewController {
+class ViewController: UITableViewController {
+    
+    let itemList: [(title: String, vc: UIViewController)] = [
+        ("基础使用篇", NormalViewController()),
+        ("Style使用篇", StyleViewController()),
+        ("TableView1", FlexTableViewController()),
+        ("TableView2", FlexTableViewController2()),
+        ("ScrollView", FlexScrollViewController()),
+        ("RemoveView", RemoveViewController()),
+        ("RxTableView", RXTableViewController()),
+        ("RxNormalTableView", RxNormalTableViewController()),
+        ("RxSwipeMenuTableView", FlexTableViewSwipeMenuController()),
+        ("RxMutipleSelectTableView", RxTableViewMultipleController()),
+        ("RxCustomEditingTableView", RxTableViewCustomEditingController()),
+        ("BubbleView", BubbleViewController()),
+        ("hidden", HiddenViewController()),
+        ("SameHeightCell", SameHeightCellViewController()),
+        ("CollectionView", CollectionViewController()),
+        ("DrTableNormal", DrTableNormalViewController()),
+    ]
 
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Flex Layout"
         
-    }
-    
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        view.dr_flex.layout()
-    }
-    
-    override func loadView() {
-        let v = UIView()
-        v.backgroundColor = .white
-        v.dr_flex.justifyContent(.center).alignItems(.center).define { flex in
-            flex.addItem(UIButton(type: .custom)).width(150).height(34).define { flex in
-                if let btn = flex.view as? UIButton {
-                    btn.setTitle("基础使用篇", for: .normal)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.backgroundColor = .blue
-                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-                    btn.addTarget(self, action: #selector(clickNormal(_:)), for: .touchUpInside)
-                }
-            }
-            
-            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
-                if let btn = flex.view as? UIButton {
-                    btn.setTitle("Style使用篇", for: .normal)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.backgroundColor = .blue
-                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-                    btn.addTarget(self, action: #selector(clickStyle(_:)), for: .touchUpInside)
-                }
-            }
-
-            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
-                if let btn = flex.view as? UIButton {
-                    btn.setTitle("TableView1", for: .normal)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.backgroundColor = .blue
-                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-                    btn.addTarget(self, action: #selector(clickTableView(_:)), for: .touchUpInside)
-                }
-            }
-            
-            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
-                if let btn = flex.view as? UIButton {
-                    btn.setTitle("TableView2", for: .normal)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.backgroundColor = .blue
-                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-                    btn.addTarget(self, action: #selector(clickTableView2(_:)), for: .touchUpInside)
-                }
-            }
-            
-            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
-                if let btn = flex.view as? UIButton {
-                    btn.setTitle("ScrollView", for: .normal)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.backgroundColor = .blue
-                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-                    btn.addTarget(self, action: #selector(clickScrollView(_:)), for: .touchUpInside)
-                }
-            }
-            
-            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
-                if let btn = flex.view as? UIButton {
-                    btn.setTitle("RemoveView", for: .normal)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.backgroundColor = .blue
-                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-                    btn.addTarget(self, action: #selector(clickRemoveView(_:)), for: .touchUpInside)
-                }
-            }
-            
-            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
-                if let btn = flex.view as? UIButton {
-                    btn.setTitle("RxTableView", for: .normal)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.backgroundColor = .blue
-                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-                    btn.addTarget(self, action: #selector(clickRxTableView(_:)), for: .touchUpInside)
-                }
-            }
-            
-            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
-                if let btn = flex.view as? UIButton {
-                    btn.setTitle("RxNormalTableView", for: .normal)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.backgroundColor = .blue
-                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-                    btn.addTarget(self, action: #selector(clickRxNormalTableView(_:)), for: .touchUpInside)
-                }
-            }
-            
-            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
-                if let btn = flex.view as? UIButton {
-                    btn.setTitle("RxSwipeMenuTableView", for: .normal)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.backgroundColor = .blue
-                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-                    btn.addTarget(self, action: #selector(clickTableViewSwipeMenu(_:)), for: .touchUpInside)
-                }
-            }
-            
-            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
-                if let btn = flex.view as? UIButton {
-                    btn.setTitle("RxMutipleSelectTableView", for: .normal)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.backgroundColor = .blue
-                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-                    btn.addTarget(self, action: #selector(clickTableViewMutipleSelect(_:)), for: .touchUpInside)
-                }
-            }
-            
-            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
-                if let btn = flex.view as? UIButton {
-                    btn.setTitle("RxCustomEditingTableView", for: .normal)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.backgroundColor = .blue
-                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-                    btn.addTarget(self, action: #selector(clickTableViewCustomEditing(_:)), for: .touchUpInside)
-                }
-            }
-            
-            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
-                if let btn = flex.view as? UIButton {
-                    btn.setTitle("BubbleView", for: .normal)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.backgroundColor = .blue
-                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-                    btn.addTarget(self, action: #selector(clickBubbleView(_:)), for: .touchUpInside)
-                }
-            }
-            
-            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
-                if let btn = flex.view as? UIButton {
-                    btn.setTitle("hidden", for: .normal)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.backgroundColor = .blue
-                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-                    btn.addTarget(self, action: #selector(clickHiddenView(_:)), for: .touchUpInside)
-                }
-            }
-            
-            flex.addItem(UIButton(type: .custom)).width(150).height(34).marginTop(10).define { flex in
-                if let btn = flex.view as? UIButton {
-                    btn.setTitle("SameHeightCell", for: .normal)
-                    btn.setTitleColor(.white, for: .normal)
-                    btn.backgroundColor = .blue
-                    btn.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
-                    btn.addTarget(self, action: #selector(clickSameHeightCell(_:)), for: .touchUpInside)
-                }
-            }
-            
-        }
-        view = v
-    }
-    
-    @objc private func clickNormal(_ btn: UIButton){
-        let vc = NormalViewController()
-        vc.title = btn.title(for: .normal)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func clickStyle(_ btn: UIButton){
-        let vc = StyleViewController()
-        vc.title = btn.title(for: .normal)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func clickTableView(_ btn: UIButton){
-        let vc = FlexTableViewController()
-        vc.title = btn.title(for: .normal)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func clickTableView2(_ btn: UIButton){
-        let vc = FlexTableViewController2()
-        vc.title = btn.title(for: .normal)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func clickTableViewSwipeMenu(_ btn: UIButton){
-        let vc = FlexTableViewSwipeMenuController()
-        vc.title = btn.title(for: .normal)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func clickTableViewMutipleSelect(_ btn: UIButton){
-        let vc = RxTableViewMultipleController()
-        vc.title = btn.title(for: .normal)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func clickTableViewCustomEditing(_ btn: UIButton){
-        let vc = RxTableViewCustomEditingController()
-        vc.title = btn.title(for: .normal)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func clickScrollView(_ btn: UIButton){
-        let vc = FlexScrollViewController()
-        vc.title = btn.title(for: .normal)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func clickRemoveView(_ btn: UIButton) {
-        let vc = RemoveViewController()
-        vc.title = btn.title(for: .normal)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func clickRxTableView(_ btn: UIButton) {
-        let vc = RXTableViewController()
-        vc.title = btn.title(for: .normal)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func clickRxNormalTableView(_ btn: UIButton) {
-        let vc = RxNormalTableViewController()
-        vc.title = btn.title(for: .normal)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func clickBubbleView(_ btn: UIButton) {
-        let vc = BubbleViewController()
-        vc.title = btn.title(for: .normal)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func clickHiddenView(_ btn: UIButton) {
-        let vc = HiddenViewController()
-        vc.title = btn.title(for: .normal)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func clickSameHeightCell(_ btn: UIButton) {
-        let vc = SameHeightCellViewController()
-        vc.title = btn.title(for: .normal)
-        self.navigationController?.pushViewController(vc, animated: true)
+        tableView.rowHeight = 44
+        tableView.separatorStyle = .singleLine
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
     
 }
 
+
+extension ViewController {
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        itemList.count
+    }
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        cell.selectionStyle = .none
+        if #available(iOS 14.0, *) {
+            var config = UIListContentConfiguration.valueCell()
+            config.text = itemList[indexPath.row].title
+            cell.contentConfiguration = config
+        }
+        return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let (title, vc) = itemList[indexPath.row]
+        vc.title = title
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+}
