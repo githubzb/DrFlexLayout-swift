@@ -136,7 +136,7 @@ class GroupDataSourceViewController: UIViewController {
     
     @objc func clickBarButtonItem() {
         isShowHeaderAndFooter = !isShowHeaderAndFooter
-        tableView.reload(needCleanCache: false)
+        tableView.reload()
     }
 }
 

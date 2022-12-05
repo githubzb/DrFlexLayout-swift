@@ -86,6 +86,7 @@
 		6D9EECAA293E1AAE0086B893 /* GroupDataSourceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9EECA6293E1AAE0086B893 /* GroupDataSourceViewController.swift */; };
 		6D9EECAB293E1AAE0086B893 /* ItemDataSourceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9EECA7293E1AAE0086B893 /* ItemDataSourceViewController.swift */; };
 		6D9EECAC293E1AAE0086B893 /* MutableHeightTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9EECA8293E1AAE0086B893 /* MutableHeightTableViewController.swift */; };
+		6D9EECAE293E23E80086B893 /* DeleteDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9EECAD293E23E80086B893 /* DeleteDemoViewController.swift */; };
 		6DA1B0F228E0372E00F9F62B /* RxTableViewMultipleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA1B0F128E0372E00F9F62B /* RxTableViewMultipleController.swift */; };
 		6DA1B0F528E0436000F9F62B /* RxTableViewCustomEditingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA1B0F428E0436000F9F62B /* RxTableViewCustomEditingController.swift */; };
 		6DA1B0F728E0455000F9F62B /* DrMutipleSelectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA1B0F628E0455000F9F62B /* DrMutipleSelectCell.swift */; };
@@ -214,6 +215,7 @@
 		6D9EECA6293E1AAE0086B893 /* GroupDataSourceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupDataSourceViewController.swift; sourceTree = "<group>"; };
 		6D9EECA7293E1AAE0086B893 /* ItemDataSourceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDataSourceViewController.swift; sourceTree = "<group>"; };
 		6D9EECA8293E1AAE0086B893 /* MutableHeightTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutableHeightTableViewController.swift; sourceTree = "<group>"; };
+		6D9EECAD293E23E80086B893 /* DeleteDemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteDemoViewController.swift; sourceTree = "<group>"; };
 		6DA1B0F128E0372E00F9F62B /* RxTableViewMultipleController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxTableViewMultipleController.swift; sourceTree = "<group>"; };
 		6DA1B0F428E0436000F9F62B /* RxTableViewCustomEditingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxTableViewCustomEditingController.swift; sourceTree = "<group>"; };
 		6DA1B0F628E0455000F9F62B /* DrMutipleSelectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrMutipleSelectCell.swift; sourceTree = "<group>"; };
@@ -507,6 +509,7 @@
 				6D9EECA6293E1AAE0086B893 /* GroupDataSourceViewController.swift */,
 				6D9EECA7293E1AAE0086B893 /* ItemDataSourceViewController.swift */,
 				6D9EECA8293E1AAE0086B893 /* MutableHeightTableViewController.swift */,
+				6D9EECAD293E23E80086B893 /* DeleteDemoViewController.swift */,
 			);
 			path = drtableViewTest;
 			sourceTree = "<group>";
@@ -830,6 +833,7 @@
 				6DA1B0F728E0455000F9F62B /* DrMutipleSelectCell.swift in Sources */,
 				1B9730B4274B2AEA0075C149 /* UIColor.swift in Sources */,
 				6D3020722714832A0065254C /* AppDelegate.swift in Sources */,
+				6D9EECAE293E23E80086B893 /* DeleteDemoViewController.swift in Sources */,
 				6D9EECAB293E1AAE0086B893 /* ItemDataSourceViewController.swift in Sources */,
 				6D9AB25727FB318F00E26458 /* DRLoadMoreCellView.swift in Sources */,
 				6D7B4AE9290CC13700C4D187 /* SameHeightCellViewController.swift in Sources */,

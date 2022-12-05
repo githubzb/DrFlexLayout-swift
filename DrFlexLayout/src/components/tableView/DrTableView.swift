@@ -95,13 +95,87 @@ public class DrTableView: UIView, DrScrollViewTouchHook {
 // MARK: - tool
 extension DrTableView {
     
-    public func reload(needCleanCache: Bool = true) {
+    public func reload(needCleanCache: Bool = false) {
         if needCleanCache {
-            dataSource?.cleanCache()
+            dataSource?.cleanCache(indexPaths: nil)
         }
         table.reloadData()
     }
     
+    public func reloadRow(at indexPath: IndexPath, needCleanCache: Bool = false, with animation: UITableView.RowAnimation = .none) {
+        reloadRows(at: [indexPath], needCleanCache: needCleanCache, with: animation)
+    }
+    
+    public func reloadRows(at indexPaths: [IndexPath], needCleanCache: Bool = false, with animation: UITableView.RowAnimation = .none) {
+        if needCleanCache {
+            dataSource?.cleanCache(indexPaths: indexPaths)
+        }
+        table.reloadRows(at: indexPaths, with: animation)
+    }
+    
+    /// IndexSet([1, 2, 3])
+    public func reloadSections(_ sections: IndexSet, needCleanCache: Bool = false, with animation: UITableView.RowAnimation) {
+        if needCleanCache {
+            var indexPaths: [IndexPath] = []
+            for section in sections {
+                let rows = table.numberOfRows(inSection: section)
+                for row in 0..<rows {
+                    indexPaths.append(IndexPath(row: row, section: section))
+                }
+            }
+            dataSource?.cleanCache(indexPaths: indexPaths)
+        }
+        table.reloadSections(sections, with: animation)
+    }
+    
+    /**
+     获取指定indexPath的cell视图
+     
+     - Parameter indexPath: IndexPath
+     
+     - Returns: cell视图
+     */
+    public func cellView<T: UIView>(at indexPath: IndexPath) -> T? {
+        guard let cell = table.cellForRow(at: indexPath) else {
+            return nil
+        }
+        return cell.contentView.viewWithTag(viewTag) as? T
+    }
+    
+    /**
+     获取可见区域的cell视图
+     */
+    public func visibleCellViews<T: UIView>() -> [T] {
+        return table.visibleCells.compactMap({$0.contentView.viewWithTag(viewTag) as? T})
+    }
+    
+    /**
+     获取指定组的HeaderView
+     
+     - Parameter section: 组下标
+     
+     - Returns: HeaderView
+     */
+    public func headerView<T: UIView>(atSection section: Int) -> T? {
+        guard let header = table.headerView(forSection: section) else {
+            return nil
+        }
+        return header.contentView.viewWithTag(viewTag) as? T
+    }
+    
+    /**
+     获取指定组的FooterView
+     
+     - Parameter section: 组下标
+     
+     - Returns: FooterView
+     */
+    public func footerView<T: UIView>(atSection section: Int) -> T? {
+        guard let footer = table.footerView(forSection: section) else {
+            return nil
+        }
+        return footer.contentView.viewWithTag(section) as? T
+    }
     
     
     /// 设置cell选中style，目的是去掉cell点击后的选中背景
@@ -120,6 +194,13 @@ extension DrTableView {
             }
         }else {
             cell.selectionStyle = .none
+        }
+    }
+    
+    /// 设置cell编辑状态
+    fileprivate func setCellEditing(_ isEditing: Bool, animated: Bool) {
+        table.visibleCells.forEach { [weak self] cell in
+            self?.setCellSelectionStyle(cell: cell)
         }
     }
 }
@@ -427,7 +508,7 @@ extension DrTableView {
     public var isEditing: Bool {
         set {
             table.isEditing = newValue
-//            setCellEditing(newValue, animated: false)
+            setCellEditing(newValue, animated: false)
         }
         get {
             table.isEditing
@@ -436,7 +517,60 @@ extension DrTableView {
     
     public func setEditing(_ editing: Bool, animated: Bool) {
         table.setEditing(editing, animated: animated)
-//        setCellEditing(editing, animated: animated)
+        setCellEditing(editing, animated: animated)
+    }
+    
+    public func numberOfRows(inSection section: Int) -> Int { table.numberOfRows(inSection: section) }
+    /// includes header, footer and all rows
+    func rect(forSection section: Int) -> CGRect { table.rect(forSection: section) }
+    public func rectForHeader(inSection section: Int) -> CGRect { table.rectForHeader(inSection: section) }
+    public func rectForFooter(inSection section: Int) -> CGRect { table.rectForFooter(inSection: section) }
+    public func rectForRow(at indexPath: IndexPath) -> CGRect { table.rectForRow(at: indexPath) }
+    /// returns nil if point is outside of any row in the table
+    public func indexPathForRow(at point: CGPoint) -> IndexPath? { table.indexPathForRow(at: point) }
+    /// returns nil if rect not valid
+    public func indexPathsForRows(in rect: CGRect) -> [IndexPath]? { table.indexPathsForRows(in: rect) }
+    public var indexPathsForVisibleRows: [IndexPath]? { table.indexPathsForVisibleRows }
+    
+    public func scrollToRow(at indexPath: IndexPath, at scrollPosition: UITableView.ScrollPosition, animated: Bool) {
+        table.scrollToRow(at: indexPath, at: scrollPosition, animated: animated)
+    }
+
+    public func scrollToNearestSelectedRow(at scrollPosition: UITableView.ScrollPosition, animated: Bool) {
+        table.scrollToNearestSelectedRow(at: scrollPosition, animated: animated)
+    }
+    
+    // Allows multiple insert/delete/reload/move calls to be animated simultaneously. Nestable.
+    @available(iOS 11.0, *)
+    public func performBatchUpdates(_ updates: (() -> Void)?, completion: ((Bool) -> Void)? = nil) {
+        table.performBatchUpdates(updates, completion: completion)
+    }
+    
+    public func moveSection(_ section: Int, toSection newSection: Int) { table.moveSection(section, toSection: newSection) }
+    public func moveRow(at indexPath: IndexPath, to newIndexPath: IndexPath) { table.moveRow(at: indexPath, to: newIndexPath) }
+    
+    public var hasUncommittedUpdates: Bool {
+        if #available(iOS 11.0, *) {
+            return table.hasUncommittedUpdates
+        }
+        return false
+    }
+    
+    public func reloadSectionIndexTitles() { table.reloadSectionIndexTitles() }
+    
+    /// returns nil or index path representing section and row of selection.
+    public var indexPathForSelectedRow: IndexPath? { table.indexPathForSelectedRow }
+
+    /// returns nil or a set of index paths representing the sections and rows of the selection.
+    public var indexPathsForSelectedRows: [IndexPath]? { table.indexPathsForSelectedRows }
+    
+    /// Selects and deselects rows. These methods will not call the delegate methods (-tableView:willSelectRowAtIndexPath: or tableView:didSelectRowAtIndexPath:), nor will it send out a notification.
+    public func selectRow(at indexPath: IndexPath?, animated: Bool, scrollPosition: UITableView.ScrollPosition) {
+        table.selectRow(at: indexPath, animated: animated, scrollPosition: scrollPosition)
+    }
+
+    public func deselectRow(at indexPath: IndexPath, animated: Bool) {
+        table.deselectRow(at: indexPath, animated: animated)
     }
 }
 

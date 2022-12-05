@@ -28,7 +28,7 @@ public protocol DrTableViewDataSource {
     func footerView(section: Int) -> DrViewBuilder?
     func headerHeight(section: Int, in tableView: UITableView) -> CGFloat?
     func footerHeight(section: Int, in tableView: UITableView) -> CGFloat?
-    func cleanCache()
+    func cleanCache(indexPaths: [IndexPath]?)
     
     // MARK: - delegate
     func click(view: UIView, indexPath: IndexPath)
@@ -131,6 +131,10 @@ extension DrTableViewGroupSource {
 
 extension DrTableViewGroupSource: DrTableViewDataSource {
     
+    private func cacheKey(indexPath: IndexPath) -> String {
+        "\(indexPath.section)-\(indexPath.row)"
+    }
+    
     public var numberOfSections: Int {
         source?.count ?? 1
     }
@@ -151,7 +155,7 @@ extension DrTableViewGroupSource: DrTableViewDataSource {
     public func cellHeight(indexPath: IndexPath, in tableView: UITableView) -> CGFloat {
         let viewBuilder = cellView(indexPath: indexPath)
         if isMutableHeight {
-            let tag = "\(indexPath.section)-\(indexPath.row)"
+            let tag = cacheKey(indexPath: indexPath)
             guard let height = heightCaches[tag] else {
                 let view = viewBuilder.builder(nil)
                 view.dr_resetWidth(tableView.frame.width)
@@ -223,8 +227,17 @@ extension DrTableViewGroupSource: DrTableViewDataSource {
         return height
     }
     
-    public func cleanCache() {
-        heightCaches.removeAll()
+    public func cleanCache(indexPaths: [IndexPath]?) {
+        if isMutableHeight {
+            // 清除指定缓存
+            if let indexPaths = indexPaths {
+                for indexPath in indexPaths {
+                    heightCaches[cacheKey(indexPath: indexPath)] = nil
+                }
+            }
+        }else {
+            heightCaches.removeAll()
+        }
     }
     
     public func click(view: UIView, indexPath: IndexPath) {
@@ -309,6 +322,10 @@ public class DrTableViewItemSource<Item> {
 
 extension DrTableViewItemSource: DrTableViewDataSource {
     
+    private func cacheKey(indexPath: IndexPath) -> String {
+        "\(indexPath.section)-\(indexPath.row)"
+    }
+    
     public var numberOfSections: Int {
         1
     }
@@ -329,7 +346,7 @@ extension DrTableViewItemSource: DrTableViewDataSource {
     public func cellHeight(indexPath: IndexPath, in tableView: UITableView) -> CGFloat {
         let viewBuilder = cellView(indexPath: indexPath)
         if isMutableHeight {
-            let tag = "\(indexPath.section)-\(indexPath.row)"
+            let tag = cacheKey(indexPath: indexPath)
             guard let height = heightCaches[tag] else {
                 let view = viewBuilder.builder(nil)
                 view.dr_resetWidth(tableView.frame.width)
@@ -393,8 +410,17 @@ extension DrTableViewItemSource: DrTableViewDataSource {
         return height
     }
     
-    public func cleanCache() {
-        heightCaches.removeAll()
+    public func cleanCache(indexPaths: [IndexPath]?) {
+        if isMutableHeight {
+            // 清除指定缓存
+            if let indexPaths = indexPaths {
+                for indexPath in indexPaths {
+                    heightCaches[cacheKey(indexPath: indexPath)] = nil
+                }
+            }
+        }else {
+            heightCaches.removeAll()
+        }
     }
     
     public func click(view: UIView, indexPath: IndexPath) {
