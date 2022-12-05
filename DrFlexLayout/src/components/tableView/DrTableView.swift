@@ -65,13 +65,6 @@ public class DrTableView: UIView, DrScrollViewTouchHook {
         }
     }
     
-    public func reload(needCleanCache: Bool = true) {
-        if needCleanCache {
-            dataSource?.cleanCache()
-        }
-        table.reloadData()
-    }
-    
     public func touchesShouldBegin(_ touches: Set<UITouch>, with event: UIEvent?, in view: UIView) -> Bool {
         true
     }
@@ -95,6 +88,38 @@ public class DrTableView: UIView, DrScrollViewTouchHook {
             footer.dr_resetWidth(bounds.width)
             footer.dr_flex.layout(mode: .adjustHeight)
             table.tableFooterView = footer
+        }
+    }
+}
+
+// MARK: - tool
+extension DrTableView {
+    
+    public func reload(needCleanCache: Bool = true) {
+        if needCleanCache {
+            dataSource?.cleanCache()
+        }
+        table.reloadData()
+    }
+    
+    
+    
+    /// 设置cell选中style，目的是去掉cell点击后的选中背景
+    fileprivate func setCellSelectionStyle(cell: UITableViewCell) {
+        if isEditing {
+            // cell.selectionStyle = .none // 设置该值会导致多选时，选择按钮点击没有选中状态，因此采用下面方法
+            if allowsMultipleSelectionDuringEditing {
+                if cell.multipleSelectionBackgroundView == nil {
+                    let v = UIView()
+                    v.backgroundColor = backgroundColor
+                    cell.multipleSelectionBackgroundView = v
+                }
+                cell.selectionStyle = .default
+            }else {
+                cell.selectionStyle = .none
+            }
+        }else {
+            cell.selectionStyle = .none
         }
     }
 }
@@ -395,6 +420,27 @@ extension DrTableView {
     
 }
 
+// MARK: - TableView Method
+extension DrTableView {
+    
+    /// default is NO. setting is not animated.
+    public var isEditing: Bool {
+        set {
+            table.isEditing = newValue
+//            setCellEditing(newValue, animated: false)
+        }
+        get {
+            table.isEditing
+        }
+    }
+    
+    public func setEditing(_ editing: Bool, animated: Bool) {
+        table.setEditing(editing, animated: animated)
+//        setCellEditing(editing, animated: animated)
+    }
+}
+
+
 // MARK: - DataSource
 fileprivate class _DataSource: NSObject, UITableViewDataSource {
     
@@ -414,20 +460,21 @@ fileprivate class _DataSource: NSObject, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let viewBuilder = table!.dataSource!.view(indexPath: indexPath)
+        let viewBuilder = table!.dataSource!.cellView(indexPath: indexPath)
         let cell: UITableViewCell
         if let _cell = tableView.dequeueReusableCell(withIdentifier: viewBuilder.reuseId) {
             cell = _cell
         }else {
             cell = UITableViewCell(style: .default, reuseIdentifier: viewBuilder.reuseId)
         }
+        cell.contentView.backgroundColor = tableView.backgroundColor
         let cellView: UIView
         if let view = cell.contentView.viewWithTag(table!.viewTag) {
             let v = viewBuilder.builder(view)
             if v != view {
                 // 未复用视图
                 v.tag = table!.viewTag
-                let height = table!.dataSource!.height(indexPath: indexPath, in: tableView)
+                let height = table!.dataSource!.cellHeight(indexPath: indexPath, in: tableView)
                 v.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: height)
                 view.removeFromSuperview()
                 cell.contentView.addSubview(v)
@@ -438,7 +485,7 @@ fileprivate class _DataSource: NSObject, UITableViewDataSource {
         }else {
             let view = viewBuilder.builder(nil)
             view.tag = table!.viewTag
-            let height = table!.dataSource!.height(indexPath: indexPath, in: tableView)
+            let height = table!.dataSource!.cellHeight(indexPath: indexPath, in: tableView)
             view.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: height)
             cell.contentView.addSubview(view)
             cellView = view
@@ -449,6 +496,13 @@ fileprivate class _DataSource: NSObject, UITableViewDataSource {
         return cell
     }
     
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        nil
+    }
+    
+    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        nil
+    }
 }
 
 fileprivate class _Delegate: NSObject, UITableViewDelegate {
@@ -460,10 +514,122 @@ fileprivate class _Delegate: NSObject, UITableViewDelegate {
         super.init()
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath),
+              let v = cell.contentView.viewWithTag(table!.viewTag) else {
+            return
+        }
+        table?.dataSource?.click(view: v, indexPath: indexPath)
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         guard let height = table?.rowHeight, height > 0 else {
-            return table?.dataSource?.height(indexPath: indexPath, in: tableView) ?? 0
+            return table?.dataSource?.cellHeight(indexPath: indexPath, in: tableView) ?? 0
         }
         return height
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        table?.setCellSelectionStyle(cell: cell)
+        guard let v = cell.contentView.viewWithTag(table!.viewTag) else {
+            return
+        }
+        table?.dataSource?.willDisplay(view: v, indexPath: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard let viewBuilder = table?.dataSource?.headerView(section: section) else {
+            return nil
+        }
+        var header = tableView.dequeueReusableHeaderFooterView(withIdentifier: viewBuilder.reuseId)
+        if header == nil {
+            header = UITableViewHeaderFooterView(reuseIdentifier: viewBuilder.reuseId)
+        }
+        header?.contentView.backgroundColor = tableView.backgroundColor
+        let headerView: UIView
+        if let v = header?.contentView.viewWithTag(table!.viewTag) {
+            let newView = viewBuilder.builder(v)
+            if newView != v {
+                // 未复用视图
+                newView.tag = table!.viewTag
+                let height = table!.dataSource!.headerHeight(section: section, in: tableView) ?? 0
+                newView.frame = CGRect(origin: .zero, size: CGSize(width: tableView.frame.width, height: height))
+                v.removeFromSuperview()
+                header?.contentView.addSubview(newView)
+                headerView = newView
+            }else {
+                headerView = v
+            }
+        }else {
+            headerView = viewBuilder.builder(nil)
+            headerView.tag = table!.viewTag
+            let height = table!.dataSource!.headerHeight(section: section, in: tableView) ?? 0
+            headerView.frame = CGRect(origin: .zero, size: CGSize(width: tableView.frame.width, height: height))
+            header?.contentView.addSubview(headerView)
+        }
+        if headerView.isYogaEnabled {
+            headerView.dr_flex.layoutByAsync()
+        }
+        return header
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if let height = table?.dataSource?.headerHeight(section: section, in: tableView), height > 0 {
+            return height
+        }
+        switch tableView.style {
+        case .grouped, .insetGrouped:
+            return CGFloat.leastNonzeroMagnitude
+        default:
+            return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        guard let viewBuilder = table?.dataSource?.footerView(section: section) else {
+            return nil
+        }
+        var footer = tableView.dequeueReusableHeaderFooterView(withIdentifier: viewBuilder.reuseId)
+        if footer == nil {
+            footer = UITableViewHeaderFooterView(reuseIdentifier: viewBuilder.reuseId)
+        }
+        footer?.contentView.backgroundColor = tableView.backgroundColor
+        let footerView: UIView
+        if let v = footer?.contentView.viewWithTag(table!.viewTag) {
+            let newView = viewBuilder.builder(v)
+            if newView != v {
+                // 未复用视图
+                newView.tag = table!.viewTag
+                let height = table!.dataSource!.footerHeight(section: section, in: tableView) ?? 0
+                newView.frame = CGRect(origin: .zero, size: CGSize(width: tableView.frame.width, height: height))
+                v.removeFromSuperview()
+                footer?.contentView.addSubview(newView)
+                footerView = newView
+            }else {
+                footerView = v
+            }
+        }else {
+            footerView = viewBuilder.builder(nil)
+            footerView.tag = table!.viewTag
+            let height = table!.dataSource!.footerHeight(section: section, in: tableView) ?? 0
+            footerView.frame = CGRect(origin: .zero, size: CGSize(width: tableView.frame.width, height: height))
+            footer?.contentView.addSubview(footerView)
+        }
+        if footerView.isYogaEnabled {
+            footerView.dr_flex.layoutByAsync()
+        }
+        return footer
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if let height = table?.dataSource?.footerHeight(section: section, in: tableView), height > 0 {
+            return height
+        }
+        switch tableView.style {
+        case .grouped, .insetGrouped:
+            return CGFloat.leastNonzeroMagnitude
+        default:
+            return 0
+        }
     }
 }
