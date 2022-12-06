@@ -19,7 +19,7 @@ public class DrTableView: UIView, DrScrollViewTouchHook {
     /// 内部的UITableView（注意：请不要直接改变其相关的代理方法，否则内部将无法正确工作）
     public var innerTable: UITableView { table }
     /// 数据源
-    public var dataSource: DrTableViewDataSource?
+    public var dataSource: DrTableViewProtocol?
     
     /// cell高度，默认：0（对于相同高度的cell，设置该属性有利于提升计算高度的性能；<=0：自动计算高度）
     public var rowHeight: CGFloat = 0
@@ -637,6 +637,18 @@ fileprivate class _DataSource: NSObject, UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         nil
     }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return table?.dataSource?.canEdit(indexPath: indexPath) ?? false
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath),
+              let v = cell.contentView.viewWithTag(table!.viewTag) else {
+            return
+        }
+        table?.dataSource?.commitEdit(view: v, editingStyle: editingStyle, indexPath: indexPath)
+    }
 }
 
 fileprivate class _Delegate: NSObject, UITableViewDelegate {
@@ -648,27 +660,11 @@ fileprivate class _Delegate: NSObject, UITableViewDelegate {
         super.init()
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = tableView.cellForRow(at: indexPath),
-              let v = cell.contentView.viewWithTag(table!.viewTag) else {
-            return
-        }
-        table?.dataSource?.click(view: v, indexPath: indexPath)
-    }
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         guard let height = table?.rowHeight, height > 0 else {
             return table?.dataSource?.cellHeight(indexPath: indexPath, in: tableView) ?? 0
         }
         return height
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        table?.setCellSelectionStyle(cell: cell)
-        guard let v = cell.contentView.viewWithTag(table!.viewTag) else {
-            return
-        }
-        table?.dataSource?.willDisplay(view: v, indexPath: indexPath)
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -765,5 +761,75 @@ fileprivate class _Delegate: NSObject, UITableViewDelegate {
         default:
             return 0
         }
+    }
+    
+    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        guard let dataSource = table?.dataSource,
+              let cell = tableView.cellForRow(at: indexPath),
+              let v = cell.contentView.viewWithTag(table!.viewTag) else {
+            return indexPath
+        }
+        
+        return dataSource.willClick(view: v, indexPath: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
+        guard let dataSource = table?.dataSource,
+              let cell = tableView.cellForRow(at: indexPath),
+              let v = cell.contentView.viewWithTag(table!.viewTag) else {
+            return indexPath
+        }
+        return dataSource.willDeselect(view: v, indexPath: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let dataSource = table?.dataSource,
+              let cell = tableView.cellForRow(at: indexPath),
+              let v = cell.contentView.viewWithTag(table!.viewTag) else {
+            return
+        }
+        dataSource.click(view: v, indexPath: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        guard let dataSource = table?.dataSource,
+              let cell = tableView.cellForRow(at: indexPath),
+              let v = cell.contentView.viewWithTag(table!.viewTag) else {
+            return
+        }
+        dataSource.deselect(view: v, indexPath: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        table?.setCellSelectionStyle(cell: cell)
+        guard let dataSource = table?.dataSource,
+              let v = cell.contentView.viewWithTag(table!.viewTag) else {
+            return
+        }
+        dataSource.willDisplay(view: v, indexPath: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        guard let dataSource = table?.dataSource,
+              let v = view.viewWithTag(table!.viewTag) else {
+            return
+        }
+        dataSource.willDisplayHeader(view: v, section: section)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
+        guard let dataSource = table?.dataSource,
+              let v = view.viewWithTag(table!.viewTag) else {
+            return
+        }
+        dataSource.willDisplayFooter(view: v, section: section)
+    }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        table?.dataSource?.editingStyle(indexPath: indexPath) ?? .none
+    }
+    
+    func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
+        table?.dataSource?.titleForDelete(indexPath: indexPath)
     }
 }

@@ -10,23 +10,23 @@ import DrFlexLayout
 
 class ViewController: UITableViewController {
     
-    let itemList: [(title: String, vc: UIViewController)] = [
-        ("基础使用篇", NormalViewController()),
-        ("Style使用篇", StyleViewController()),
-        ("TableView1", FlexTableViewController()),
-        ("TableView2", FlexTableViewController2()),
-        ("ScrollView", FlexScrollViewController()),
-        ("RemoveView", RemoveViewController()),
-        ("RxTableView", RXTableViewController()),
-        ("RxNormalTableView", RxNormalTableViewController()),
-        ("RxSwipeMenuTableView", FlexTableViewSwipeMenuController()),
-        ("RxMutipleSelectTableView", RxTableViewMultipleController()),
-        ("RxCustomEditingTableView", RxTableViewCustomEditingController()),
-        ("BubbleView", BubbleViewController()),
-        ("hidden", HiddenViewController()),
-        ("SameHeightCell", SameHeightCellViewController()),
-        ("CollectionView", CollectionViewController()),
-        ("DrTableViewDemo", DrTableViewListController()),
+    let itemList: [(title: String, vc: ()->UIViewController)] = [
+        ("基础使用篇", {NormalViewController()}),
+        ("Style使用篇", {StyleViewController()}),
+        ("TableView1", {FlexTableViewController()}),
+        ("TableView2", {FlexTableViewController2()}),
+        ("ScrollView", {FlexScrollViewController()}),
+        ("RemoveView", {RemoveViewController()}),
+        ("RxTableView", {RXTableViewController()}),
+        ("RxNormalTableView", {RxNormalTableViewController()}),
+        ("RxSwipeMenuTableView", {FlexTableViewSwipeMenuController()}),
+        ("RxMutipleSelectTableView", {RxTableViewMultipleController()}),
+        ("RxCustomEditingTableView", {RxTableViewCustomEditingController()}),
+        ("BubbleView", {BubbleViewController()}),
+        ("hidden", {HiddenViewController()}),
+        ("SameHeightCell", {SameHeightCellViewController()}),
+        ("CollectionView", {CollectionViewController()}),
+        ("DrTableViewDemo", {DrTableViewListController()}),
     ]
 
     override func viewDidLoad() {
@@ -58,7 +58,8 @@ extension ViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let (title, vc) = itemList[indexPath.row]
+        let (title, builder) = itemList[indexPath.row]
+        let vc = builder()
         vc.title = title
         self.navigationController?.pushViewController(vc, animated: true)
     }

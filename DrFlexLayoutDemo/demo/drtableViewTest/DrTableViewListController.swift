@@ -9,11 +9,11 @@ import UIKit
 
 class DrTableViewListController: UITableViewController {
     
-    let itemList: [(title: String, vc: UIViewController)] = [
-        ("ItemDataSource", ItemDataSourceViewController()),
-        ("GroupDataSource", GroupDataSourceViewController()),
-        ("可变高度", MutableHeightTableViewController()),
-        ("删除操作", DeleteDemoViewController())
+    let itemList: [(title: String, vc: ()->UIViewController)] = [
+        ("ItemDataSource", {ItemDataSourceViewController()}),
+        ("GroupDataSource", {GroupDataSourceViewController()}),
+        ("可变高度", {MutableHeightTableViewController()}),
+        ("删除操作", {DeleteDemoViewController()})
     ]
 
     override func viewDidLoad() {
@@ -44,7 +44,8 @@ extension DrTableViewListController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let (title, vc) = itemList[indexPath.row]
+        let (title, builder) = itemList[indexPath.row]
+        let vc = builder()
         vc.title = title
         self.navigationController?.pushViewController(vc, animated: true)
     }

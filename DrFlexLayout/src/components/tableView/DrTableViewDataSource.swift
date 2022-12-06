@@ -17,9 +17,10 @@ public struct DrViewBuilder {
     }
 }
 
+public typealias DrTableViewProtocol = DrTableViewDataSource & DrTableViewDelegate
+
 public protocol DrTableViewDataSource {
     
-    // MARK: - Source
     var numberOfSections: Int { get }
     func numberOfRowsInSection(section: Int) -> Int
     func cellView(indexPath: IndexPath) -> DrViewBuilder
@@ -29,18 +30,220 @@ public protocol DrTableViewDataSource {
     func headerHeight(section: Int, in tableView: UITableView) -> CGFloat?
     func footerHeight(section: Int, in tableView: UITableView) -> CGFloat?
     func cleanCache(indexPaths: [IndexPath]?)
+}
+
+public protocol DrTableViewDelegate {
     
-    // MARK: - delegate
     func click(view: UIView, indexPath: IndexPath)
+    func deselect(view: UIView, indexPath: IndexPath)
     func willDisplay(view: UIView, indexPath: IndexPath)
+    func willDisplayHeader(view: UIView, section: Int)
+    func willDisplayFooter(view: UIView, section: Int)
+    func willClick(view: UIView, indexPath: IndexPath) -> IndexPath?
+    func willDeselect(view: UIView, indexPath: IndexPath) -> IndexPath?
+    
+    func canEdit(indexPath: IndexPath) -> Bool
+    func editingStyle(indexPath: IndexPath) -> UITableViewCell.EditingStyle
+    func titleForDelete(indexPath: IndexPath) -> String?
+    func commitEdit(view: UIView, editingStyle: UITableViewCell.EditingStyle, indexPath: IndexPath)
+}
+
+public class DrTableViewSourceBase<Item>: DrTableViewDelegate {
+    
+    
+    typealias CellAction = (_ item: Item, _ indexPath: IndexPath, _ view: UIView) -> Void
+    typealias CellRetIndexPathAction = (_ item: Item, _ indexPath: IndexPath, _ view: UIView) -> IndexPath?
+    typealias CanEditBinder = (_ item: Item, _ indexPath: IndexPath) -> Bool
+    typealias CommitEditBinder = (_ item: Item, _ indexPath: IndexPath, _ editStyle: UITableViewCell.EditingStyle, _ view: UIView) -> Void
+    typealias EditingStyleBinder = (_ item: Item, _ indexPath: IndexPath) -> UITableViewCell.EditingStyle
+    typealias TitleForDeleteBinder = (_ item: Item, _ indexPath: IndexPath) -> String?
+    
+    private var clickBinder: CellAction?
+    private var deselectBinder: CellAction?
+    private var willDisplayBinder: CellAction?
+    private var willClickBinder: CellRetIndexPathAction?
+    private var willDeselectBinder: CellRetIndexPathAction?
+    
+    private var canEditBinder: CanEditBinder?
+    private var editingStyleBinder: EditingStyleBinder?
+    private var titleForDeleteBinder: TitleForDeleteBinder?
+    private var commitEditBinder: CommitEditBinder?
+    
+    func item(indexPath: IndexPath) -> Item {
+        fatalError("需子类重写该方法")
+    }
+    
+    /// 点击回调
+    public func onClick<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath, _ view: UIView) -> Void) {
+        clickBinder = { [weak target] (item, indexPath, view) in
+            guard let target = target else {
+                return
+            }
+            return binding(target, item, indexPath, view)
+        }
+    }
+    
+    /// 取消选中回调
+    public func onDeselect<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath, _ view: UIView) -> Void) {
+        deselectBinder = { [weak target] (item, indexPath, view) in
+            guard let target = target else {
+                return
+            }
+            return binding(target, item, indexPath, view)
+        }
+    }
+    
+    /// 将要执行点击回调，返回nil，将不执行点击回调
+    public func onWillClick<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath, _ view: UIView) -> IndexPath?) {
+        willClickBinder = { [weak target] (item, indexPath, view) in
+            guard let target = target else {
+                return nil
+            }
+            return binding(target, item, indexPath, view)
+        }
+    }
+    
+    /// 将要执行取消选中回调，返回nil，将不执行取消选中回调
+    public func onWillDeselect<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath, _ view: UIView) -> IndexPath?) {
+        willDeselectBinder = { [weak target] (item, indexPath, view) in
+            guard let target = target else {
+                return nil
+            }
+            return binding(target, item, indexPath, view)
+        }
+    }
+    
+    /// cell将要显示回调
+    public func onWillDisplay<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath, _ view: UIView) -> Void) {
+        willDisplayBinder = { [weak target] (item, indexPath, view) in
+            guard let target = target else {
+                return
+            }
+            return binding(target, item, indexPath, view)
+        }
+    }
+    
+    public func onCanEdit<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath) -> Bool) {
+        canEditBinder = { [weak target] (item, indexPath) in
+            guard let target = target else {
+                return false
+            }
+            return binding(target, item, indexPath)
+        }
+    }
+    
+    public func onEditingStyle<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath) -> UITableViewCell.EditingStyle) {
+        editingStyleBinder = { [weak target] (item, indexPath) in
+            guard let target = target else {
+                return .none
+            }
+            return binding(target, item, indexPath)
+        }
+    }
+    
+    public func onTitleForDelete<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath) -> String?) {
+        titleForDeleteBinder = { [weak target] (item, indexPath) in
+            guard let target = target else {
+                return nil
+            }
+            return binding(target, item, indexPath)
+        }
+    }
+    
+    public func onCommitEdit<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath, _ editStyle: UITableViewCell.EditingStyle, _ view: UIView) -> Void) {
+        commitEditBinder = { [weak target] (item, indexPath, editStyle, view) in
+            guard let target = target else {
+                return
+            }
+            binding(target, item, indexPath, editStyle, view)
+        }
+    }
+    
+    
+    public func click(view: UIView, indexPath: IndexPath) {
+        guard let clickBinder = clickBinder else {
+            return
+        }
+        let item = item(indexPath: indexPath)
+        clickBinder(item, indexPath, view)
+    }
+    
+    public func deselect(view: UIView, indexPath: IndexPath) {
+        guard let deselectBinder = deselectBinder else {
+            return
+        }
+        let item = item(indexPath: indexPath)
+        deselectBinder(item, indexPath, view)
+    }
+    
+    public func willDisplay(view: UIView, indexPath: IndexPath) {
+        guard let willDisplayBinder = willDisplayBinder else {
+            return
+        }
+        let item = item(indexPath: indexPath)
+        willDisplayBinder(item, indexPath, view)
+    }
+    
+    public func willDisplayHeader(view: UIView, section: Int) {}
+    
+    public func willDisplayFooter(view: UIView, section: Int) {}
+    
+    public func willClick(view: UIView, indexPath: IndexPath) -> IndexPath? {
+        guard let willClickBinder = willClickBinder else {
+            return indexPath
+        }
+        let item = item(indexPath: indexPath)
+        return willClickBinder(item, indexPath, view)
+    }
+    
+    public func willDeselect(view: UIView, indexPath: IndexPath) -> IndexPath? {
+        guard let willDeselectBinder = willDeselectBinder else {
+            return indexPath
+        }
+        let item = item(indexPath: indexPath)
+        return willDeselectBinder(item, indexPath, view)
+    }
+    
+    public func canEdit(indexPath: IndexPath) -> Bool {
+        guard let canEditBinder = canEditBinder else {
+            return false
+        }
+        let item = item(indexPath: indexPath)
+        return canEditBinder(item, indexPath)
+    }
+    
+    public func editingStyle(indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        guard let editingStyleBinder = editingStyleBinder else {
+            return .none
+        }
+        let item = item(indexPath: indexPath)
+        return editingStyleBinder(item, indexPath)
+    }
+    
+    public func titleForDelete(indexPath: IndexPath) -> String? {
+        guard let titleForDeleteBinder = titleForDeleteBinder else {
+            return nil
+        }
+        let item = item(indexPath: indexPath)
+        return titleForDeleteBinder(item, indexPath)
+    }
+    
+    public func commitEdit(view: UIView, editingStyle: UITableViewCell.EditingStyle, indexPath: IndexPath) {
+        guard let commitEditBinder = commitEditBinder else {
+            return
+        }
+        let item = item(indexPath: indexPath)
+        commitEditBinder(item, indexPath, editingStyle, view)
+    }
     
 }
 
-public class DrTableViewGroupSource<Item> {
+
+public class DrTableViewGroupSource<Item>: DrTableViewSourceBase<Item> {
     
     public typealias CellBuilder = (_ item: Item, _ indexPath: IndexPath) -> DrViewBuilder
     public typealias HeaderFooterBuilder = (_ group: Group<Item>, _ section: Int) -> DrViewBuilder?
-    public typealias CellAction = (_ item: Item, _ indexPath: IndexPath, _ view: UIView) -> Void
+    typealias HeaderFooterDisplayBinder = (_ group: Group<Item>, _ section: Int, _ view: UIView) -> Void
     
     private var sourceBinder: (() -> [Group<Item>]?)?
     private var source: [Group<Item>]? { sourceBinder?() }
@@ -48,8 +251,9 @@ public class DrTableViewGroupSource<Item> {
     private let cellBuilder: CellBuilder
     private let headerBuilder: HeaderFooterBuilder?
     private let footerBuilder: HeaderFooterBuilder?
-    private var clickBinder: CellAction?
-    private var willDisplayBinder: CellAction?
+    
+    private var willDisplayHeaderBinder: HeaderFooterDisplayBinder?
+    private var willDisplayFooterBinder: HeaderFooterDisplayBinder?
     
     private var heightCaches: [String: CGFloat] = [:]
     
@@ -77,24 +281,44 @@ public class DrTableViewGroupSource<Item> {
         }
     }
     
-    /// 点击回调
-    public func onClick<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath, _ view: UIView) -> Void) {
-        clickBinder = { [weak target] (item, indexPath, view) in
+    /// 组头视图将要显示
+    public func onWillDisplayHeader<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ group: Group<Item>, _ section: Int, _ view: UIView) -> Void) {
+        willDisplayHeaderBinder = { [weak target] (group, section, view) in
             guard let target = target else {
                 return
             }
-            return binding(target, item, indexPath, view)
+            binding(target, group, section, view)
         }
     }
     
-    /// cell将要显示回调
-    public func onWillDisplay<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath, _ view: UIView) -> Void) {
-        willDisplayBinder = { [weak target] (item, indexPath, view) in
+    /// 组尾视图将要显示
+    public func onWillDisplayFooter<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ group: Group<Item>, _ section: Int, _ view: UIView) -> Void) {
+        willDisplayFooterBinder = { [weak target] (group, section, view) in
             guard let target = target else {
                 return
             }
-            return binding(target, item, indexPath, view)
+            binding(target, group, section, view)
         }
+    }
+    
+    override func item(indexPath: IndexPath) -> Item {
+        source![indexPath.section][indexPath.row]
+    }
+    
+    public override func willDisplayHeader(view: UIView, section: Int) {
+        guard let willDisplayHeaderBinder = willDisplayHeaderBinder else {
+            return
+        }
+        let group = source![section]
+        willDisplayHeaderBinder(group, section, view)
+    }
+    
+    public override func willDisplayFooter(view: UIView, section: Int) {
+        guard let willDisplayFooterBinder = willDisplayFooterBinder else {
+            return
+        }
+        let group = source![section]
+        willDisplayFooterBinder(group, section, view)
     }
 }
 
@@ -240,29 +464,14 @@ extension DrTableViewGroupSource: DrTableViewDataSource {
         }
     }
     
-    public func click(view: UIView, indexPath: IndexPath) {
-        guard let clickBinder = clickBinder else {
-            return
-        }
-        let item = item(row: indexPath.row, section: indexPath.section)
-        clickBinder(item, indexPath, view)
-    }
-    
-    public func willDisplay(view: UIView, indexPath: IndexPath) {
-        guard let willDisplayBinder = willDisplayBinder else {
-            return
-        }
-        let item = item(row: indexPath.row, section: indexPath.section)
-        willDisplayBinder(item, indexPath, view)
-    }
 }
 
 
-public class DrTableViewItemSource<Item> {
+public class DrTableViewItemSource<Item>: DrTableViewSourceBase<Item> {
     
     public typealias CellBuilder = (_ item: Item, _ indexPath: IndexPath) -> DrViewBuilder
     public typealias HeaderFooterBuilder = () -> DrViewBuilder
-    public typealias CellAction = (_ item: Item, _ indexPath: IndexPath, _ view: UIView) -> Void
+    typealias HeaderFooterDisplayBinder = (_ section: Int, _ view: UIView) -> Void
     
     private var sourceBinder: (() -> [Item]?)?
     private var source: [Item]? { sourceBinder?() }
@@ -270,8 +479,9 @@ public class DrTableViewItemSource<Item> {
     private let cellBuilder: CellBuilder
     private let headerBuilder: HeaderFooterBuilder?
     private let footerBuilder: HeaderFooterBuilder?
-    private var clickBinder: CellAction?
-    private var willDisplayBinder: CellAction?
+    
+    private var willDisplayHeaderBinder: HeaderFooterDisplayBinder?
+    private var willDisplayFooterBinder: HeaderFooterDisplayBinder?
     
     private var heightCaches: [String: CGFloat] = [:]
     
@@ -299,25 +509,30 @@ public class DrTableViewItemSource<Item> {
         }
     }
     
-    /// 点击回调
-    public func onClick<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath, _ view: UIView) -> Void) {
-        clickBinder = { [weak target] (item, indexPath, view) in
+    /// 组头视图将要显示
+    public func onWillDisplayHeader<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ section: Int, _ view: UIView) -> Void) {
+        willDisplayHeaderBinder = { [weak target] (section, view) in
             guard let target = target else {
                 return
             }
-            return binding(target, item, indexPath, view)
+            binding(target, section, view)
         }
     }
     
-    /// cell将要显示回调
-    public func onWillDisplay<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath, _ view: UIView) -> Void) {
-        willDisplayBinder = { [weak target] (item, indexPath, view) in
+    /// 组尾视图将要显示
+    public func onWillDisplayFooter<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ section: Int, _ view: UIView) -> Void) {
+        willDisplayFooterBinder = { [weak target] (section, view) in
             guard let target = target else {
                 return
             }
-            return binding(target, item, indexPath, view)
+            binding(target, section, view)
         }
     }
+    
+    override func item(indexPath: IndexPath) -> Item {
+        source![indexPath.row]
+    }
+    
 }
 
 extension DrTableViewItemSource: DrTableViewDataSource {
@@ -423,19 +638,4 @@ extension DrTableViewItemSource: DrTableViewDataSource {
         }
     }
     
-    public func click(view: UIView, indexPath: IndexPath) {
-        guard let clickBinder = clickBinder else {
-            return
-        }
-        let item = item(row: indexPath.row, section: indexPath.section)
-        clickBinder(item, indexPath, view)
-    }
-    
-    public func willDisplay(view: UIView, indexPath: IndexPath) {
-        guard let willDisplayBinder = willDisplayBinder else {
-            return
-        }
-        let item = item(row: indexPath.row, section: indexPath.section)
-        willDisplayBinder(item, indexPath, view)
-    }
 }

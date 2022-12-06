@@ -10,13 +10,13 @@ import DrFlexLayout
 
 class DeleteDemoViewController: UIViewController {
     
+    
     let tableView: DrTableView = {
         let table = DrTableView(style: .plain)
         table.separatorStyle = .singleLine
         table.separatorInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
         table.backgroundColor = .hexColor("#F5F5F5")
         table.rowHeight = 60
-        table.allowsMultipleSelectionDuringEditing = true
         return table
     }()
     
@@ -69,6 +69,21 @@ class DeleteDemoViewController: UIViewController {
                 v.model = item
                 return v
             }
+        }
+        
+        dataSource.onCanEdit(self) { target, item, indexPath in
+            true
+        }
+        dataSource.onEditingStyle(self) { target, item, indexPath in
+            return .delete
+        }
+        dataSource.onTitleForDelete(self) { target, item, indexPath in
+            "删除"
+        }
+        dataSource.onCommitEdit(self) { target, item, indexPath, editStyle, view in
+            print("===删除：\(view), item: \(item)")
+            target.list.remove(at: indexPath.row)
+            target.tableView.reload()
         }
         
         dataSource.bindSource(self) { target in
