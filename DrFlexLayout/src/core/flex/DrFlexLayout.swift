@@ -1389,6 +1389,7 @@ public final class DrFlex {
     @discardableResult
     public func display(_ value: Display) -> DrFlex {
         yoga.display = value.yogaValue
+        view?.isHidden = value == .none
         return self
     }
     
@@ -1398,6 +1399,7 @@ public final class DrFlex {
     @discardableResult
     public func display(_ value: Bool = true) -> DrFlex {
         yoga.display = value ? .flex : .none
+        view?.isHidden = !value
         return self
     }
     
@@ -1407,6 +1409,7 @@ public final class DrFlex {
     public var isHidden: Bool {
         set {
             yoga.display = newValue ? .none : .flex
+            view?.isHidden = newValue
         }
         get {
             yoga.display == .none

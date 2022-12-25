@@ -128,6 +128,23 @@ extension DrTableView {
         table.reloadSections(sections, with: animation)
     }
     
+    public func reloadSectionIndexTitles() { table.reloadSectionIndexTitles() }
+    
+    public func insertRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
+        table.insertRows(at: indexPaths, with: animation)
+    }
+    
+    public func insertSections(sections: IndexSet, with animation: UITableView.RowAnimation) {
+        table.insertSections(sections, with: animation)
+    }
+    
+    public func deleteRows(at indexPaths: [IndexPath], needCleanCache: Bool = false, with animation: UITableView.RowAnimation) {
+        if needCleanCache {
+            dataSource?.cleanCache(indexPaths: indexPaths)
+        }
+        table.deleteRows(at: indexPaths, with: animation)
+    }
+    
     /**
      获取指定indexPath的cell视图
      
@@ -556,8 +573,6 @@ extension DrTableView {
         return false
     }
     
-    public func reloadSectionIndexTitles() { table.reloadSectionIndexTitles() }
-    
     /// returns nil or index path representing section and row of selection.
     public var indexPathForSelectedRow: IndexPath? { table.indexPathForSelectedRow }
 
@@ -639,7 +654,7 @@ fileprivate class _DataSource: NSObject, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return table?.dataSource?.canEdit(indexPath: indexPath) ?? false
+        return table?.dataSource?.canEdit(indexPath: indexPath) ?? true
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -648,6 +663,22 @@ fileprivate class _DataSource: NSObject, UITableViewDataSource {
             return
         }
         table?.dataSource?.commitEdit(view: v, editingStyle: editingStyle, indexPath: indexPath)
+    }
+    
+    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+        table?.dataSource?.sectionIndexTitles
+    }
+    
+    func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
+        table?.dataSource?.sectionIndexTitlesMap(title: title, at: index) ?? 0
+    }
+    
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        table?.dataSource?.canMove(indexPath: indexPath) ?? false
+    }
+    
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        table?.dataSource?.didMove(from: sourceIndexPath, to: destinationIndexPath)
     }
 }
 
@@ -826,10 +857,65 @@ fileprivate class _Delegate: NSObject, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        table?.dataSource?.editingStyle(indexPath: indexPath) ?? .none
+        table?.dataSource?.editingStyle(indexPath: indexPath) ?? .delete
     }
     
     func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
         table?.dataSource?.titleForDelete(indexPath: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
+        table?.dataSource?.willBeginEditing(indexPath: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {
+        guard let indexPath = indexPath else {
+            return
+        }
+        table?.dataSource?.didEndEditing(indexPath: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        table?.dataSource?.shouldIndentWhileEditing(indexPath: indexPath) ?? true
+    }
+    
+    @available(iOS 11.0, *)
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard let config = table?.dataSource?.leadingSwipeActions(indexPath: indexPath) else {
+            return nil
+        }
+        let actions = config.actions.map({ act -> UIContextualAction in
+            let action = UIContextualAction(style: .normal, title: act.title) { (_, _, completionHandler) in
+                act.handler(completionHandler)
+            }
+            action.image = act.image
+            action.backgroundColor = act.backgroundColor
+            return action
+        })
+        let cfig = UISwipeActionsConfiguration(actions: actions)
+        cfig.performsFirstActionWithFullSwipe = config.performsFirstActionWithFullSwipe
+        return cfig
+    }
+    
+    @available(iOS 11.0, *)
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard let config = table?.dataSource?.trailingSwipeActions(indexPath: indexPath) else {
+            return nil
+        }
+        let actions = config.actions.map({ act -> UIContextualAction in
+            let action = UIContextualAction(style: .normal, title: act.title) { (_, _, completionHandler) in
+                act.handler(completionHandler)
+            }
+            action.image = act.image
+            action.backgroundColor = act.backgroundColor
+            return action
+        })
+        let cfig = UISwipeActionsConfiguration(actions: actions)
+        cfig.performsFirstActionWithFullSwipe = config.performsFirstActionWithFullSwipe
+        return cfig
+    }
+    
+    func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        table?.dataSource?.shouldMove(from: sourceIndexPath, to: proposedDestinationIndexPath) ?? proposedDestinationIndexPath
     }
 }

@@ -136,8 +136,8 @@ public class DrTableDataSource<Item> {
         case .loadMore:
             table.refresh()
             
-        case let .insertRows(section, insertIndex, rowCount, refreshAfter):
-            table.insertRows(rowsCount: rowCount, section: section, at: insertIndex, afterNeedLayout: refreshAfter)
+        case let .insertRows(section, insertIndex, rowCount):
+            table.insertRows(rowsCount: rowCount, section: section, at: insertIndex)
         }
     }
     

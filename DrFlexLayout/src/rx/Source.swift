@@ -36,7 +36,7 @@ public enum Operate {
     // 加载更多section
     case loadMore
     // 在section中指定位置插入指定行数
-    case insertRows(section: Int, insertIndex: Int, rowCount: Int, refreshAfter: Bool)
+    case insertRows(section: Int, insertIndex: Int, rowCount: Int)
 }
 
 
@@ -135,8 +135,7 @@ public class DrSource<Item> {
         self.sections[section] = sec
         self.operate = .insertRows(section: section,
                                    insertIndex: insertIndex,
-                                   rowCount: models.count,
-                                   refreshAfter: false)
+                                   rowCount: models.count)
         updateId()
         return true
     }
@@ -154,8 +153,7 @@ public class DrSource<Item> {
         self.sections[section] = sec
         self.operate = .insertRows(section: section,
                                    insertIndex: insertIndex,
-                                   rowCount: 1,
-                                   refreshAfter: false)
+                                   rowCount: 1)
         updateId()
         return true
     }

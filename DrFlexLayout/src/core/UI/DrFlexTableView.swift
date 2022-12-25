@@ -10,7 +10,7 @@ import UIKit
 fileprivate let kDrFlexCellIdentifier = "DrFlexTableView.flexCell"
 fileprivate let kDrFlexHeaderFooterIdentifier = "DrFlexTableView.flexHeaderFooter"
 
-fileprivate typealias DrFlexCellList = NSMutableArray
+fileprivate typealias DrFlexCellMap = NSMutableDictionary
 
 
 class _TableView: UITableView {
@@ -43,7 +43,7 @@ open class DrFlexTableView: UIView, DrScrollViewTouchHook {
     public var innerTable: UITableView { table }
     
     /// 存储每组cell视图
-    private lazy var cellViewMap: [Int: DrFlexCellList] = [:]
+    private lazy var cellViewMap: [Int: DrFlexCellMap] = [:]
     private lazy var headerViewMap: [Int: UIView] = [:]
     private lazy var footerViewMap: [Int: UIView] = [:]
     
@@ -126,7 +126,7 @@ open class DrFlexTableView: UIView, DrScrollViewTouchHook {
     /// 重新构建指定cell视图
     public func reloadRows(at: [IndexPath], with: UITableView.RowAnimation = .none) {
         for indexPath in at {
-            cellViewMap[indexPath.section]?.replaceObject(at: indexPath.row, with: NSNull())
+            cellViewMap[indexPath.section]?[indexPath.row] = nil
         }
         table.reloadRows(at: at, with: with)
     }
@@ -138,7 +138,7 @@ open class DrFlexTableView: UIView, DrScrollViewTouchHook {
      */
     public func refresh(needLayout: Bool = false) {
         if needLayout {
-            cellViewMap.values.forEach({ $0.forEach({ ($0 as? UIView)?.dr_needLayout = true }) })
+            cellViewMap.values.forEach({ $0.allValues.forEach({ ($0 as? UIView)?.dr_needLayout = true }) })
             headerViewMap.values.forEach({ $0.dr_needLayout = true })
             footerViewMap.values.forEach({ $0.dr_needLayout = true })
         }
@@ -155,7 +155,7 @@ open class DrFlexTableView: UIView, DrScrollViewTouchHook {
     public func refreshSections(_ sections: IndexSet, with: UITableView.RowAnimation = .none, needLayout: Bool = false) {
         if needLayout {
             for section in sections {
-                cellViewMap[section]?.forEach({($0 as? UIView)?.dr_needLayout = true})
+                cellViewMap[section]?.allValues.forEach({($0 as? UIView)?.dr_needLayout = true})
             }
         }
         table.reloadSections(sections, with: with)
@@ -182,15 +182,10 @@ open class DrFlexTableView: UIView, DrScrollViewTouchHook {
      - Parameter with: 刷新动画（默认：无）
      */
     public func deleteRows(at indexs: [IndexPath], with animate: UITableView.RowAnimation = .none) {
-        var idxs: [IndexPath] = []
         indexs.forEach { path in
-            guard let list = cellViewMap[path.section], path.row < list.count else {
-                return
-            }
-            idxs.append(path)
-            list.removeObject(at: path.row)
+            cellViewMap[path.section]?[path.row] = nil
         }
-        table.deleteRows(at: idxs, with: animate)
+        table.deleteRows(at: indexs, with: animate)
     }
     
     /**
@@ -199,31 +194,20 @@ open class DrFlexTableView: UIView, DrScrollViewTouchHook {
      - Parameter rowsCount: 插入cell的个数
      - Parameter section: section索引
      - Parameter at: 插入位置下标
-     - Parameter afterNeedLayout: 插入位置后面的视图是否需要重新布局
      - Parameter with: 刷新动画（默认：无）
      */
     public func insertRows(rowsCount: Int,
                            section: Int,
                            at insertIndex: Int,
-                           afterNeedLayout: Bool = false,
                            with animate: UITableView.RowAnimation = .none) {
-        guard let list = cellViewMap[section], insertIndex <= list.count, rowsCount > 0 else {
+        guard rowsCount > 0 else {
             return
         }
         var indxs: [IndexPath] = []
         for i in 0..<rowsCount {
-            list.insert(NSNull(), at: insertIndex + i)
             indxs.append(IndexPath(row: insertIndex + i, section: section))
         }
-        if afterNeedLayout {
-            let fromIdx = insertIndex + rowsCount
-            for i in fromIdx..<list.count {
-                (list[i] as? UIView)?.dr_needLayout = true
-            }
-            table.reloadSections(IndexSet([section]), with: animate)
-        }else {
-            table.insertRows(at: indxs, with: animate)
-        }
+        table.insertRows(at: indxs, with: animate)
     }
     
 //    /**
@@ -277,8 +261,12 @@ open class DrFlexTableView: UIView, DrScrollViewTouchHook {
         }else {
             sectionIndex = 0
         }
-        section.cellList.forEach({$0.dr_needLayout = true})
-        cellViewMap[sectionIndex] = DrFlexCellList(array: section.cellList)
+        let cellMap = DrFlexCellMap()
+        for (i, v) in section.cellList.enumerated() {
+            v.dr_needLayout = true
+            cellMap[i] = v
+        }
+        cellViewMap[sectionIndex] = cellMap
         if let header = section.headerView {
             header.dr_needLayout = true
             appendHeaderView(header: header, section: sectionIndex)
@@ -412,17 +400,12 @@ open class DrFlexTableView: UIView, DrScrollViewTouchHook {
     
     /// 存储cell视图
     fileprivate func appendCell(cell: UIView?, atIndexPath indexPath: IndexPath) {
-        let cellView: Any = cell == nil ? NSNull() : cell!
-        if let list = cellViewMap[indexPath.section] {
-            if indexPath.row < list.count {
-                list.replaceObject(at: indexPath.row, with: cellView)
-            }else{
-                list.add(cellView)
-            }
+        if let map = cellViewMap[indexPath.section] {
+            map[indexPath.row] = cell
         }else{
-            let list = NSMutableArray()
-            list.add(cellView)
-            cellViewMap[indexPath.section] = list
+            let map = DrFlexCellMap()
+            map[indexPath.row] = cell
+            cellViewMap[indexPath.section] = map
         }
     }
     /// 存储headerView

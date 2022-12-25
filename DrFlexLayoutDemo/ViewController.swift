@@ -27,6 +27,7 @@ class ViewController: UITableViewController {
         ("SameHeightCell", {SameHeightCellViewController()}),
         ("CollectionView", {CollectionViewController()}),
         ("DrTableViewDemo", {DrTableViewListController()}),
+        ("DrFlexTableTest", {DrFlexTableTestViewController()}),
     ]
 
     override func viewDidLoad() {

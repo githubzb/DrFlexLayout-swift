@@ -60,8 +60,7 @@ class RxTableViewModel: Reactor {
                                               section: section)
                         return .insertRows(section: section,
                                            insertIndex: idx,
-                                           rowCount: items.count,
-                                           refreshAfter: true)
+                                           rowCount: items.count)
                     }
                 }else {
                     let idx = _state.source.itemCount(section: section) - 1
@@ -78,8 +77,7 @@ class RxTableViewModel: Reactor {
                                               section: section)
                         return .insertRows(section: section,
                                            insertIndex: idx,
-                                           rowCount: items.count,
-                                           refreshAfter: true)
+                                           rowCount: items.count)
                     }
                 }else {
                     let idx = _state.source.itemCount(section: section) - 1

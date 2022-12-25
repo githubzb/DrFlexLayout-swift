@@ -21,6 +21,7 @@ public typealias DrTableViewProtocol = DrTableViewDataSource & DrTableViewDelega
 
 public protocol DrTableViewDataSource {
     
+    var sectionIndexTitles: [String]? { get }
     var numberOfSections: Int { get }
     func numberOfRowsInSection(section: Int) -> Int
     func cellView(indexPath: IndexPath) -> DrViewBuilder
@@ -30,6 +31,8 @@ public protocol DrTableViewDataSource {
     func headerHeight(section: Int, in tableView: UITableView) -> CGFloat?
     func footerHeight(section: Int, in tableView: UITableView) -> CGFloat?
     func cleanCache(indexPaths: [IndexPath]?)
+    
+    func sectionIndexTitlesMap(title: String, at index: Int) -> Int
 }
 
 public protocol DrTableViewDelegate {
@@ -46,28 +49,57 @@ public protocol DrTableViewDelegate {
     func editingStyle(indexPath: IndexPath) -> UITableViewCell.EditingStyle
     func titleForDelete(indexPath: IndexPath) -> String?
     func commitEdit(view: UIView, editingStyle: UITableViewCell.EditingStyle, indexPath: IndexPath)
+    
+    func willBeginEditing(indexPath: IndexPath)
+    func didEndEditing(indexPath: IndexPath)
+    
+    func shouldIndentWhileEditing(indexPath: IndexPath) -> Bool
+    
+    func leadingSwipeActions(indexPath: IndexPath) -> DrSwipeActionsConfiguration?
+    func trailingSwipeActions(indexPath: IndexPath) -> DrSwipeActionsConfiguration?
+    
+    func canMove(indexPath: IndexPath) -> Bool
+    func shouldMove(from sourceIndexPath: IndexPath, to proposedDestinationIndexPath: IndexPath) -> IndexPath
+    func didMove(from sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath)
 }
 
 public class DrTableViewSourceBase<Item>: DrTableViewDelegate {
     
     
     typealias CellAction = (_ item: Item, _ indexPath: IndexPath, _ view: UIView) -> Void
+    typealias IndexPathAction = (_ item: Item, _ indexPath: IndexPath) -> Void
     typealias CellRetIndexPathAction = (_ item: Item, _ indexPath: IndexPath, _ view: UIView) -> IndexPath?
     typealias CanEditBinder = (_ item: Item, _ indexPath: IndexPath) -> Bool
     typealias CommitEditBinder = (_ item: Item, _ indexPath: IndexPath, _ editStyle: UITableViewCell.EditingStyle, _ view: UIView) -> Void
     typealias EditingStyleBinder = (_ item: Item, _ indexPath: IndexPath) -> UITableViewCell.EditingStyle
     typealias TitleForDeleteBinder = (_ item: Item, _ indexPath: IndexPath) -> String?
+    typealias ShouldIdentWhileEditingBinder = (_ item: Item, _ indexPath: IndexPath) -> Bool
+    typealias SwipeAction = (_ item: Item, _ indexPath: IndexPath) -> DrSwipeActionsConfiguration?
+    typealias CanMoveBinder = (_ item: Item, _ indexPath: IndexPath) -> Bool
+    typealias ShouldMoveBinder = (_ fromItem: Item, _ toItem: Item, _ from: IndexPath, _ to: IndexPath) -> IndexPath
+    typealias DidMoveBinder = (_ fromItem: Item, _ toItem: Item, _ from: IndexPath, _ to: IndexPath) -> Void
     
     private var clickBinder: CellAction?
     private var deselectBinder: CellAction?
     private var willDisplayBinder: CellAction?
     private var willClickBinder: CellRetIndexPathAction?
     private var willDeselectBinder: CellRetIndexPathAction?
+    private var willBeginEditingBinder: IndexPathAction?
+    private var didEndEditingBinder: IndexPathAction?
     
     private var canEditBinder: CanEditBinder?
     private var editingStyleBinder: EditingStyleBinder?
     private var titleForDeleteBinder: TitleForDeleteBinder?
     private var commitEditBinder: CommitEditBinder?
+    
+    private var shouldIndentWhileEditingBinder: ShouldIdentWhileEditingBinder?
+    
+    private var leadingSwipeActionsBinder: SwipeAction?
+    private var trailingSwipeActionsBinder: SwipeAction?
+    
+    private var canMoveBinder: CanMoveBinder?
+    private var shouldMoveBinder: ShouldMoveBinder?
+    private var didMoveBinder: DidMoveBinder?
     
     func item(indexPath: IndexPath) -> Item {
         fatalError("需子类重写该方法")
@@ -123,6 +155,24 @@ public class DrTableViewSourceBase<Item>: DrTableViewDelegate {
         }
     }
     
+    public func onWillBeginEditing<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath) -> Void) {
+        willBeginEditingBinder = { [weak target] (item, indexPath) in
+            guard let target = target else {
+                return
+            }
+            binding(target, item, indexPath)
+        }
+    }
+    
+    public func onDidEndEditing<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath) -> Void) {
+        didEndEditingBinder = { [weak target] (item, indexPath) in
+            guard let target = target else {
+                return
+            }
+            binding(target, item, indexPath)
+        }
+    }
+    
     public func onCanEdit<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath) -> Bool) {
         canEditBinder = { [weak target] (item, indexPath) in
             guard let target = target else {
@@ -156,6 +206,60 @@ public class DrTableViewSourceBase<Item>: DrTableViewDelegate {
                 return
             }
             binding(target, item, indexPath, editStyle, view)
+        }
+    }
+    
+    public func onShouldIndentWhileEditing<T: AnyObject>(target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath) -> Bool) {
+        shouldIndentWhileEditingBinder = { [weak target] (item, indexPath) -> Bool in
+            guard let target = target else {
+                return true
+            }
+            return binding(target, item, indexPath)
+        }
+    }
+    
+    public func onLeadingSwipeAction<T: AnyObject>(target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath) -> DrSwipeActionsConfiguration?) {
+        leadingSwipeActionsBinder = { [weak target] (item, indexPath) in
+            guard let target = target else {
+                return nil
+            }
+            return binding(target, item, indexPath)
+        }
+    }
+    
+    public func onTrailingSwipeAction<T: AnyObject>(target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath) -> DrSwipeActionsConfiguration?) {
+        trailingSwipeActionsBinder = { [weak target] (item, indexPath) in
+            guard let target = target else {
+                return nil
+            }
+            return binding(target, item, indexPath)
+        }
+    }
+    
+    public func onCanMove<T: AnyObject>(target: T, binding: @escaping (_ target: T, _ item: Item, _ indexPath: IndexPath)->Bool) {
+        canMoveBinder = { [weak target] (item, indexPath) in
+            guard let target = target else {
+                return false
+            }
+            return binding(target, item, indexPath)
+        }
+    }
+    
+    public func onShouldMove<T: AnyObject>(target: T, binding: @escaping (_ target: T, _ fromItem: Item, _ toItem: Item, _ from: IndexPath, _ to: IndexPath) -> IndexPath) {
+        shouldMoveBinder = { [weak target] (fromItem, toItem, from, to) in
+            guard let target = target else {
+                return to
+            }
+            return binding(target, fromItem, toItem, from, to)
+        }
+    }
+    
+    public func onDidMove<T: AnyObject>(target: T, binding: @escaping (_ target: T, _ fromItem: Item, _ toItem: Item, _ from: IndexPath, _ to: IndexPath)->Void) {
+        didMoveBinder = { [weak target] (fromItem, toItem, from, to) in
+            guard let target = target else {
+                return
+            }
+            binding(target, fromItem, toItem, from, to)
         }
     }
     
@@ -206,7 +310,7 @@ public class DrTableViewSourceBase<Item>: DrTableViewDelegate {
     
     public func canEdit(indexPath: IndexPath) -> Bool {
         guard let canEditBinder = canEditBinder else {
-            return false
+            return true
         }
         let item = item(indexPath: indexPath)
         return canEditBinder(item, indexPath)
@@ -214,7 +318,7 @@ public class DrTableViewSourceBase<Item>: DrTableViewDelegate {
     
     public func editingStyle(indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         guard let editingStyleBinder = editingStyleBinder else {
-            return .none
+            return .delete
         }
         let item = item(indexPath: indexPath)
         return editingStyleBinder(item, indexPath)
@@ -236,6 +340,71 @@ public class DrTableViewSourceBase<Item>: DrTableViewDelegate {
         commitEditBinder(item, indexPath, editingStyle, view)
     }
     
+    public func willBeginEditing(indexPath: IndexPath) {
+        guard let willBeginEditingBinder = willBeginEditingBinder else {
+            return
+        }
+        let item = item(indexPath: indexPath)
+        willBeginEditingBinder(item, indexPath)
+    }
+    
+    public func didEndEditing(indexPath: IndexPath) {
+        guard let didEndEditingBinder = didEndEditingBinder else {
+            return
+        }
+        let item = item(indexPath: indexPath)
+        didEndEditingBinder(item, indexPath)
+    }
+    
+    public func shouldIndentWhileEditing(indexPath: IndexPath) -> Bool {
+        guard let shouldIndentWhileEditingBinder = shouldIndentWhileEditingBinder else {
+            return true
+        }
+        let item = item(indexPath: indexPath)
+        return shouldIndentWhileEditingBinder(item, indexPath)
+    }
+    
+    public func leadingSwipeActions(indexPath: IndexPath) -> DrSwipeActionsConfiguration? {
+        guard let leadingSwipeActionsBinder = leadingSwipeActionsBinder else {
+            return nil
+        }
+        let item = item(indexPath: indexPath)
+        return leadingSwipeActionsBinder(item, indexPath)
+    }
+    
+    public func trailingSwipeActions(indexPath: IndexPath) -> DrSwipeActionsConfiguration? {
+        guard let trailingSwipeActionsBinder = trailingSwipeActionsBinder else {
+            return nil
+        }
+        let item = item(indexPath: indexPath)
+        return trailingSwipeActionsBinder(item, indexPath)
+    }
+    
+    public func canMove(indexPath: IndexPath) -> Bool {
+        guard let canMoveBinder = canMoveBinder else {
+            return false
+        }
+        let item = item(indexPath: indexPath)
+        return canMoveBinder(item, indexPath)
+    }
+    
+    public func shouldMove(from sourceIndexPath: IndexPath, to proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        guard let shouldMoveBinder = shouldMoveBinder else {
+            return proposedDestinationIndexPath
+        }
+        let fromItem = item(indexPath: sourceIndexPath)
+        let toItem = item(indexPath: proposedDestinationIndexPath)
+        return shouldMoveBinder(fromItem, toItem, sourceIndexPath, proposedDestinationIndexPath)
+    }
+    
+    public func didMove(from sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        guard let didMoveBinder = didMoveBinder else {
+            return
+        }
+        let fromItem = item(indexPath: sourceIndexPath)
+        let toItem = item(indexPath: destinationIndexPath)
+        didMoveBinder(fromItem, toItem, sourceIndexPath, destinationIndexPath)
+    }
 }
 
 
@@ -244,6 +413,8 @@ public class DrTableViewGroupSource<Item>: DrTableViewSourceBase<Item> {
     public typealias CellBuilder = (_ item: Item, _ indexPath: IndexPath) -> DrViewBuilder
     public typealias HeaderFooterBuilder = (_ group: Group<Item>, _ section: Int) -> DrViewBuilder?
     typealias HeaderFooterDisplayBinder = (_ group: Group<Item>, _ section: Int, _ view: UIView) -> Void
+    typealias SectionIndexTitlesBuilder = () -> [String]?
+    typealias SectionIndexTitlesMapBinder = (_ title: String, _ index: Int) -> Int
     
     private var sourceBinder: (() -> [Group<Item>]?)?
     private var source: [Group<Item>]? { sourceBinder?() }
@@ -251,6 +422,8 @@ public class DrTableViewGroupSource<Item>: DrTableViewSourceBase<Item> {
     private let cellBuilder: CellBuilder
     private let headerBuilder: HeaderFooterBuilder?
     private let footerBuilder: HeaderFooterBuilder?
+    private var sectionIndexTitlesBuilder: SectionIndexTitlesBuilder?
+    private var sectionIndexTitlesMapBinder: SectionIndexTitlesMapBinder?
     
     private var willDisplayHeaderBinder: HeaderFooterDisplayBinder?
     private var willDisplayFooterBinder: HeaderFooterDisplayBinder?
@@ -259,6 +432,7 @@ public class DrTableViewGroupSource<Item>: DrTableViewSourceBase<Item> {
     
     /// 是否可变高度（当为true时，列表首次加载性能会降低，因为它会为每个cell分别计算高度，并缓存）
     public let isMutableHeight: Bool
+    public var sectionIndexTitles: [String]? { sectionIndexTitlesBuilder?() }
     
     public init(isMutableHeight: Bool = false,
                 cellBuilder: @escaping CellBuilder,
@@ -278,6 +452,25 @@ public class DrTableViewGroupSource<Item>: DrTableViewSourceBase<Item> {
                 return nil
             }
             return binding(target)
+        }
+    }
+    
+    // 绑定section index title数据源
+    public func bindSectionIndexTitles<T: AnyObject>(_ target: T, binding: @escaping (_ target: T) -> [String]?) {
+        sectionIndexTitlesBuilder = { [weak target] in
+            guard let target = target else {
+                return nil
+            }
+            return binding(target)
+        }
+    }
+    
+    public func onSectionIndexTitlesMap<T: AnyObject>(_ target: T, binding: @escaping (_ target: T, _ title: String, _ index: Int) -> Int) {
+        sectionIndexTitlesMapBinder = { [weak target] (title, index) in
+            guard let target = target else {
+                return 0
+            }
+            return binding(target, title, index)
         }
     }
     
@@ -319,6 +512,10 @@ public class DrTableViewGroupSource<Item>: DrTableViewSourceBase<Item> {
         }
         let group = source![section]
         willDisplayFooterBinder(group, section, view)
+    }
+    
+    public func sectionIndexTitlesMap(title: String, at index: Int) -> Int {
+        sectionIndexTitlesMapBinder?(title, index) ?? 0
     }
 }
 
@@ -487,6 +684,7 @@ public class DrTableViewItemSource<Item>: DrTableViewSourceBase<Item> {
     
     /// 是否可变高度（当为true时，列表首次加载性能会降低，因为它会为每个cell分别计算高度，并缓存）
     public let isMutableHeight: Bool
+    public var sectionIndexTitles: [String]? { nil }
     
     public init(isMutableHeight: Bool = false,
                 cellBuilder: @escaping CellBuilder,
@@ -533,6 +731,9 @@ public class DrTableViewItemSource<Item>: DrTableViewSourceBase<Item> {
         source![indexPath.row]
     }
     
+    public func sectionIndexTitlesMap(title: String, at index: Int) -> Int {
+        0
+    }
 }
 
 extension DrTableViewItemSource: DrTableViewDataSource {

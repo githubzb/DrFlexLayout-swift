@@ -13,7 +13,11 @@ class DrTableViewListController: UITableViewController {
         ("ItemDataSource", {ItemDataSourceViewController()}),
         ("GroupDataSource", {GroupDataSourceViewController()}),
         ("可变高度", {MutableHeightTableViewController()}),
-        ("删除操作", {DeleteDemoViewController()})
+        ("删除操作", {DeleteDemoViewController()}),
+        ("编辑状态", {DrTableEditingViewController()}),
+        ("Section index titles", {SectionIndexTitlesDemoViewController()}),
+        ("swipe actions", {SwipeActionDemoViewController()}),
+        ("Move item", {MoveDemoViewController()})
     ]
 
     override func viewDidLoad() {
