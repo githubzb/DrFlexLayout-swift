@@ -17,6 +17,7 @@ public struct DrViewBuilder {
     }
 }
 
+
 public typealias DrTableViewProtocol = DrTableViewDataSource & DrTableViewDelegate
 
 public protocol DrTableViewDataSource {
@@ -61,10 +62,31 @@ public protocol DrTableViewDelegate {
     func canMove(indexPath: IndexPath) -> Bool
     func shouldMove(from sourceIndexPath: IndexPath, to proposedDestinationIndexPath: IndexPath) -> IndexPath
     func didMove(from sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath)
+    
+    // menu
+    @available(iOS 13.0, *)
+    func menuConfiguration(indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration?
+    @available(iOS 13.0, *)
+    func menuPreviewForHighlighting(configuration: UIContextMenuConfiguration) -> UITargetedPreview?
+    @available(iOS 13.0, *)
+    func menuPreviewForDismissing(configuration: UIContextMenuConfiguration) -> UITargetedPreview?
+    @available(iOS 13.0, *)
+    func menuClickPreview(configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating)
+}
+
+public protocol DrTableMenuDelegate: NSObject {
+    
+    @available(iOS 13.0, *)
+    func menuConfiguration(indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration?
+    @available(iOS 13.0, *)
+    func menuPreviewForHighlighting(configuration: UIContextMenuConfiguration) -> UITargetedPreview?
+    @available(iOS 13.0, *)
+    func menuPreviewForDismissing(configuration: UIContextMenuConfiguration) -> UITargetedPreview?
+    @available(iOS 13.0, *)
+    func menuClickPreview(configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating)
 }
 
 public class DrTableViewSourceBase<Item>: DrTableViewDelegate {
-    
     
     typealias CellAction = (_ item: Item, _ indexPath: IndexPath, _ view: UIView) -> Void
     typealias IndexPathAction = (_ item: Item, _ indexPath: IndexPath) -> Void
@@ -78,6 +100,7 @@ public class DrTableViewSourceBase<Item>: DrTableViewDelegate {
     typealias CanMoveBinder = (_ item: Item, _ indexPath: IndexPath) -> Bool
     typealias ShouldMoveBinder = (_ fromItem: Item, _ toItem: Item, _ from: IndexPath, _ to: IndexPath) -> IndexPath
     typealias DidMoveBinder = (_ fromItem: Item, _ toItem: Item, _ from: IndexPath, _ to: IndexPath) -> Void
+    
     
     private var clickBinder: CellAction?
     private var deselectBinder: CellAction?
@@ -100,6 +123,9 @@ public class DrTableViewSourceBase<Item>: DrTableViewDelegate {
     private var canMoveBinder: CanMoveBinder?
     private var shouldMoveBinder: ShouldMoveBinder?
     private var didMoveBinder: DidMoveBinder?
+    
+    public weak var menuDelegate: DrTableMenuDelegate?
+    
     
     func item(indexPath: IndexPath) -> Item {
         fatalError("需子类重写该方法")
@@ -264,6 +290,7 @@ public class DrTableViewSourceBase<Item>: DrTableViewDelegate {
     }
     
     
+    // MARK: - delegate
     public func click(view: UIView, indexPath: IndexPath) {
         guard let clickBinder = clickBinder else {
             return
@@ -404,6 +431,26 @@ public class DrTableViewSourceBase<Item>: DrTableViewDelegate {
         let fromItem = item(indexPath: sourceIndexPath)
         let toItem = item(indexPath: destinationIndexPath)
         didMoveBinder(fromItem, toItem, sourceIndexPath, destinationIndexPath)
+    }
+    
+    @available(iOS 13.0, *)
+    public func menuConfiguration(indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        return menuDelegate?.menuConfiguration(indexPath: indexPath, point: point)
+    }
+    
+    @available(iOS 13.0, *)
+    public func menuPreviewForHighlighting(configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        menuDelegate?.menuPreviewForHighlighting(configuration: configuration)
+    }
+    
+    @available(iOS 13.0, *)
+    public func menuPreviewForDismissing(configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        menuDelegate?.menuPreviewForDismissing(configuration: configuration)
+    }
+    
+    @available(iOS 13.0, *)
+    public func menuClickPreview(configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        menuDelegate?.menuClickPreview(configuration: configuration, animator: animator)
     }
 }
 

@@ -17,7 +17,8 @@ class DrTableViewListController: UITableViewController {
         ("编辑状态", {DrTableEditingViewController()}),
         ("Section index titles", {SectionIndexTitlesDemoViewController()}),
         ("swipe actions", {SwipeActionDemoViewController()}),
-        ("Move item", {MoveDemoViewController()})
+        ("Move item", {MoveDemoViewController()}),
+        ("show Menu", {DrTableViewMenuViewController()})
     ]
 
     override func viewDidLoad() {

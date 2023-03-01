@@ -918,4 +918,24 @@ fileprivate class _Delegate: NSObject, UITableViewDelegate {
     func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
         table?.dataSource?.shouldMove(from: sourceIndexPath, to: proposedDestinationIndexPath) ?? proposedDestinationIndexPath
     }
+    
+    @available(iOS 13.0, *)
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        table?.dataSource?.menuConfiguration(indexPath: indexPath, point: point)
+    }
+    
+    @available(iOS 13.0, *)
+    func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        table?.dataSource?.menuPreviewForHighlighting(configuration: configuration)
+    }
+    
+    @available(iOS 13.0, *)
+    func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        table?.dataSource?.menuPreviewForDismissing(configuration: configuration)
+    }
+    
+    @available(iOS 13.0, *)
+    func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        table?.dataSource?.menuClickPreview(configuration: configuration, animator: animator)
+    }
 }
