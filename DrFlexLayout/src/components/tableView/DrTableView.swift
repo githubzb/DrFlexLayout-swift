@@ -623,8 +623,6 @@ fileprivate class _DataSource: NSObject, UITableViewDataSource {
             if v != view {
                 // 未复用视图
                 v.tag = table!.viewTag
-                let height = table!.dataSource!.cellHeight(indexPath: indexPath, in: tableView)
-                v.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: height)
                 view.removeFromSuperview()
                 cell.contentView.addSubview(v)
                 cellView = v
@@ -634,12 +632,12 @@ fileprivate class _DataSource: NSObject, UITableViewDataSource {
         }else {
             let view = viewBuilder.builder(nil)
             view.tag = table!.viewTag
-            let height = table!.dataSource!.cellHeight(indexPath: indexPath, in: tableView)
-            view.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: height)
             cell.contentView.addSubview(view)
             cellView = view
         }
         if cellView.isYogaEnabled {
+            let height = table!.dataSource!.cellHeight(indexPath: indexPath, in: tableView)
+            cellView.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: height)
             cellView.dr_flex.layoutByAsync()
         }
         return cell
@@ -713,8 +711,6 @@ fileprivate class _Delegate: NSObject, UITableViewDelegate {
             if newView != v {
                 // 未复用视图
                 newView.tag = table!.viewTag
-                let height = table!.dataSource!.headerHeight(section: section, in: tableView) ?? 0
-                newView.frame = CGRect(origin: .zero, size: CGSize(width: tableView.frame.width, height: height))
                 v.removeFromSuperview()
                 header?.contentView.addSubview(newView)
                 headerView = newView
@@ -724,11 +720,11 @@ fileprivate class _Delegate: NSObject, UITableViewDelegate {
         }else {
             headerView = viewBuilder.builder(nil)
             headerView.tag = table!.viewTag
-            let height = table!.dataSource!.headerHeight(section: section, in: tableView) ?? 0
-            headerView.frame = CGRect(origin: .zero, size: CGSize(width: tableView.frame.width, height: height))
             header?.contentView.addSubview(headerView)
         }
         if headerView.isYogaEnabled {
+            let height = table!.dataSource!.headerHeight(section: section, in: tableView) ?? 0
+            headerView.frame = CGRect(origin: .zero, size: CGSize(width: tableView.frame.width, height: height))
             headerView.dr_flex.layoutByAsync()
         }
         return header
@@ -761,8 +757,6 @@ fileprivate class _Delegate: NSObject, UITableViewDelegate {
             if newView != v {
                 // 未复用视图
                 newView.tag = table!.viewTag
-                let height = table!.dataSource!.footerHeight(section: section, in: tableView) ?? 0
-                newView.frame = CGRect(origin: .zero, size: CGSize(width: tableView.frame.width, height: height))
                 v.removeFromSuperview()
                 footer?.contentView.addSubview(newView)
                 footerView = newView
@@ -772,11 +766,11 @@ fileprivate class _Delegate: NSObject, UITableViewDelegate {
         }else {
             footerView = viewBuilder.builder(nil)
             footerView.tag = table!.viewTag
-            let height = table!.dataSource!.footerHeight(section: section, in: tableView) ?? 0
-            footerView.frame = CGRect(origin: .zero, size: CGSize(width: tableView.frame.width, height: height))
             footer?.contentView.addSubview(footerView)
         }
         if footerView.isYogaEnabled {
+            let height = table!.dataSource!.footerHeight(section: section, in: tableView) ?? 0
+            footerView.frame = CGRect(origin: .zero, size: CGSize(width: tableView.frame.width, height: height))
             footerView.dr_flex.layoutByAsync()
         }
         return footer

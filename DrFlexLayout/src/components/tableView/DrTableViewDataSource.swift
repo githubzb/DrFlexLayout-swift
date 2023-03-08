@@ -698,10 +698,12 @@ extension DrTableViewGroupSource: DrTableViewDataSource {
     public func cleanCache(indexPaths: [IndexPath]?) {
         if isMutableHeight {
             // 清除指定缓存
-            if let indexPaths = indexPaths {
+            if let indexPaths = indexPaths, indexPaths.count > 0 {
                 for indexPath in indexPaths {
                     heightCaches[cacheKey(indexPath: indexPath)] = nil
                 }
+            }else {
+                heightCaches.removeAll()
             }
         }else {
             heightCaches.removeAll()
@@ -876,10 +878,12 @@ extension DrTableViewItemSource: DrTableViewDataSource {
     public func cleanCache(indexPaths: [IndexPath]?) {
         if isMutableHeight {
             // 清除指定缓存
-            if let indexPaths = indexPaths {
+            if let indexPaths = indexPaths, indexPaths.count > 0 {
                 for indexPath in indexPaths {
                     heightCaches[cacheKey(indexPath: indexPath)] = nil
                 }
+            }else {
+                heightCaches.removeAll()
             }
         }else {
             heightCaches.removeAll()
