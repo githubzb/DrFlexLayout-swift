@@ -636,7 +636,7 @@ fileprivate class _DataSource: NSObject, UITableViewDataSource {
             cellView = view
         }
         if cellView.isYogaEnabled {
-            let height = table!.dataSource!.cellHeight(indexPath: indexPath, in: tableView)
+            let height = table!.rowHeight > 0 ? table!.rowHeight : table!.dataSource!.cellHeight(indexPath: indexPath, in: tableView)
             cellView.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: height)
             cellView.dr_flex.layoutByAsync()
         }
